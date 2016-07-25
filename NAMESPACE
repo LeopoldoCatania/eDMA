@@ -1,0 +1,8 @@
+useDynLib(eDMA)
+import(methods)
+importFrom(Rcpp, evalCpp)
+importFrom(xts, xts)
+importFrom(parallel, detectCores)
+exportClasses("DMA")
+exportMethods("show", "plot", "as.data.frame", "coef", "residuals", "summary", "inclusion.prob", "pred.like")
+export("BacktestDMA", "DMA", "Lag", "SimulateDLM")
