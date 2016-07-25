@@ -89,7 +89,7 @@ setMethod("as.data.frame", signature(x = "DMA"), function(x, which, iBurnPeriod 
   Est = object@Est
 
   if (is(vY, "xts")) {
-    vDates = xts::index(vY)
+    vDates = index(vY)
   } else {
     vDates = 1:length(vY)
   }
