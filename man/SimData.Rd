@@ -33,8 +33,8 @@ iK_Add = 2
 
 mX_add = matrix(rnorm(iT * iK_Add), iT, iK_Add)
 
-SimData = cbind(vY = vY, mX, mX_add)
-colnames(SimData) = c("vY", paste("x", 2:(iK + iK_Add + 1), sep = ""))
+SimData = cbind(y = vY, mX, mX_add)
+colnames(SimData) = c("y", paste("x", 2:(iK + iK_Add + 1), sep = ""))
 
 }
 }

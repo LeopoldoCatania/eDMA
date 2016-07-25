@@ -177,7 +177,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
     } else {
       if (which == "mtheta")
         which = "mmhat"
-      series2plot = Est[[which]]
+      series2plot = as.matrix(Est[[which]])
       if (is.null(series2plot))
         stop(paste("which =", which, "is not supported."))
       PlotType = PlotLabel2Number(which)
@@ -188,7 +188,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
       if (dev.cur() != 1)
         dev.off()
 
-      if (!is.matrix(series2plot) | ncol(series2plot) == 1) {
+      if (ncol(series2plot) == 1) {
         sTitle = TitleFun("DMA", PlotType)
         plot(vDates, vY, type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = c(min(series2plot[-1]), max(series2plot[-1])),
              main = sTitle)
