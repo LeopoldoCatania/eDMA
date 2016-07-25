@@ -19,7 +19,7 @@ List PowerSet(int iK) {
   for (i=0; i < iK; ++i) {
     int cnt2 = counter;            // capture counter state
     for (j =0; j <= counter; ++j) {
-      cnt2++;                   // capture counter + j steps
+      cnt2++;                   // capture counter j steps
       tmp = as<NumericVector>(out[j]);
       tmp.push_back(els[i]);
       out[cnt2] = Rcpp::as<arma::uvec>(wrap(tmp));
