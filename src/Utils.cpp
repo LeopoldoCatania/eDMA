@@ -1,5 +1,9 @@
 #include <RcppArmadillo.h>
+#if defined(_OPENMP)
+#include <omp.h>
+#endif
 
+// [[Rcpp::plugins(openmp)]]
 using namespace Rcpp;
 using namespace arma;
 
