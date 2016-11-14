@@ -1,9 +1,5 @@
 #include <RcppArmadillo.h>
-#if defined(_OPENMP)
-#include <omp.h>
-#endif
 
-// [[Rcpp::plugins(openmp)]]
 using namespace Rcpp;
 using namespace arma;
 
@@ -21,4 +17,17 @@ int MaxFinder(arma::vec vX){
     }
   }
   return iMax;
+}
+
+int int_pow(int base, int exp)
+{
+  int result = 1;
+  while (exp)
+  {
+    if (exp & 1)
+      result *= base;
+    exp /= 2;
+    base *= base;
+  }
+  return result;
 }

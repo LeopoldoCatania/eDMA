@@ -4,9 +4,9 @@
 #include "Estimate.h"
 #if defined(_OPENMP)
 #include <omp.h>
+// [[Rcpp::plugins(openmp)]]
 #endif
 
-// [[Rcpp::plugins(openmp)]]
 using namespace Rcpp;
 using namespace arma;
 

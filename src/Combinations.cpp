@@ -1,4 +1,5 @@
 #include <RcppArmadillo.h>
+#include "Utils.h"
 
 using namespace Rcpp;
 using namespace arma;
@@ -11,7 +12,7 @@ List PowerSet(int iK) {
   for(i=0;i<iK;i++)
     els[i]=i;
 
-  int pwrset_card = pow(2,iK);
+  int pwrset_card = int_pow(2,iK);
   List out(pwrset_card);
   out[0] = NumericVector::create();
   NumericVector tmp;
@@ -37,7 +38,7 @@ field<uvec> PowerSet2(int iK) {
   for(i=0;i<iK;i++)
     els[i]=i;
 
-  int pwrset_card = pow(2,iK);
+  int pwrset_card = int_pow(2,iK);
   NumericVector tmp;
   field<uvec> fOut(pwrset_card);
 
@@ -65,7 +66,7 @@ field<uvec> PowerSet2_withkeep(int iK, arma::vec vKeep) {
   for(i=0;i<iK;i++)
     els[i]=i;
 
-  int pwrset_card = pow(2,iK);
+  int pwrset_card = int_pow(2,iK);
   NumericVector tmp;
   field<uvec> fOut(pwrset_card);
 
@@ -117,13 +118,6 @@ field<uvec> PowerSet2_f(int iK, arma::vec vKeep){
   }else{
     fOut = PowerSet2_withkeep(iK, vKeep);
   }
-
-  //
-  // if(vKeep.size()!=iK){
-  //   fOut = PowerSet2_withkeep(iK, vKeep);
-  // }else{
-  //   fOut = PowerSet2(iK);
-  // }
 
   return fOut;
 }
