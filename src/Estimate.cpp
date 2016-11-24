@@ -297,7 +297,7 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
     vobs(i)      = accu(vS.t() % mpmt_DMAD.row(i));
     vcoeff(i)    = accu(vFmRmF.t() % mpmt_DMAD.row(i));
     vmod(i)      = accu(vyhati.t() % mpmt_DMAD.row(i));
-    vtvp(i)      = accu(pow(mypred.row(i) - vyhat(i),2.0));
+    vtvp(i)      = accu(pow(mypred.row(i) - vyhat(i),2.0) % mpmt_DMAD.row(i));
     vtotal(i)    = vobs(i) + vcoeff(i) + vmod(i) + vtvp(i);
 
   }
