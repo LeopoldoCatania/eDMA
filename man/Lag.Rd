@@ -33,7 +33,7 @@ library(eDMA)
 ## load data
 data("USData")
 
-UDData_lagged = Lag(USData, 1)
+UDData_lagged <- Lag(USData, 1)
 
 }
 }

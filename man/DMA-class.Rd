@@ -12,6 +12,8 @@
 \alias{inclusion.prob,DMA-method}
 \alias{pred.like}
 \alias{pred.like,DMA-method}
+\alias{getLastForecast}
+\alias{getLastForecast,DMA-method}
 \title{class: Class for the DMA class}
 \description{
 Class for the DMA estimate.
@@ -33,7 +35,7 @@ Class for the DMA estimate.
 Extracts estimated quantities, (see note). }
 \item{plot}{\code{signature(x = "DMA", y = "missing")}:
 Plots estimated quantities. }
-\item{show}{\code{signature(object = "DMA")}}
+\item{show}{\code{signature(object = "DMA")}}.
 \item{summary}{\code{signature(object = "DMA")}:
 Print a summary of the estimated model. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used.
 }
@@ -41,38 +43,45 @@ Print a summary of the estimated model. This method accepts the additional argum
 Extract the filtered regressor coefficients. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used.
 }
 \item{residuals}{\code{signature(object = "DMA")}:
-Extract the residuals of the model. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used. The additional Boolean argument \code{standardize} controls if standardize residuals should be returned. By default \code{standardize = FALSE}. The additional argument \code{Type} permits to choose between residuals evaluated using DMA or DMS. By default \code{Type = "DMA"}.
+Extract the residuals of the model. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used. The additional Boolean argument \code{standardize} controls if standardize residuals should be returned. By default \code{standardize = FALSE}. The additional argument \code{type} permits to choose between residuals evaluated using DMA or DMS. By default \code{type = "DMA"}.
 }
 \item{inclusion.prob}{\code{signature(object = "DMA")}:
 Extract the inclusion probabilities of the regressors. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used.
 }
 \item{pred.like}{\code{signature(object = "DMA")}:
-Extract the predictive log likelihood series. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used. The additional argument \code{Type} permits to choose between predictive likelihood evaluated using DMA or DMS. By default \code{Type = "DMA"}.
+Extract the predictive log-likelihood series. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used. The additional argument \code{type} permits to choose between predictive likelihood evaluated using DMA or DMS. By default \code{type = "DMA"}.
 }
+\item{getLastForecast}{\code{signature(object = "DMA")}:
+If the last observation of the dependent variable was \code{NA}, i.e. the practitioner desidered to predict \eqn{Y_{T+1}} having a sample of length \eqn{T} (without backtesting the result), this method can be used to extract the predicted value \eqn{\hat{y_T+1} = E[y_{T+1} | F_T]} as well as the predicted variance decomposition according to Equation (12) of Catania and Nonejad (2016).
+}
+
 }
 }
 \note{
 The \code{as.data.frame()} method permits to extract several estimated quantities. It accepts the two additional arguments: \code{which} with possible values:
 \itemize{
-  \item{\code{mincpmt}}: Posterior inclusion probability of the predictors
-  \item{\code{vsize}}: Expected number of predictors (average size)
-  \item{\code{mtheta}}: Filtered estimates of the regression coefficients
-  \item{\code{mpmt}}: Posterior probability of the degree of instability
-  \item{\code{vyhat}}: Point forecasts
-  \item{\code{vLpdfhat}}: Predictive likelihood
-  \item{\code{vdeltahat}}: Posterior weighted average of delta
-  \item{\code{mvdec}}: representing the y_t variance decomposition. The function returns a T x 5 matrix whose columns contains the variables
+  \item{\code{mincpmt}}: Posterior inclusion probabilities of the predictors.
+  \item{\code{vsize}}: Expected number of predictors (average size).
+  \item{\code{mtheta}}: Filtered estimates of the regression coefficients.
+  \item{\code{mpmt}}: Posterior probability of the degree of instability.
+  \item{\code{vyhat}}: Point forecasts.
+  \item{\code{vLpdfhat}}: Predictive log-likelihood.
+  \item{\code{vdeltahat}}: Posterior weighted average of delta.
+  \item{\code{mvdec}}: representing the y_t variance decomposition. The function returns a T x 5 matrix whose columns contains the variables.
   \itemize{
-    \item{\code{vtotal}}: total variance
-    \item{\code{vobs}}: Observational variance
-    \item{\code{vcoeff}}: Variance due to errors in the estimation of the coefficients
-    \item{\code{vmod}}: Variance due to model uncertainty
+    \item{\code{vtotal}}: total variance.
+    \item{\code{vobs}}: Observational variance.
+    \item{\code{vcoeff}}: Variance due to errors in the estimation of the coefficients.
+    \item{\code{vmod}}: Variance due to model uncertainty.
     \item{\code{vtvp}}: Variance due to uncertainty with respect to the choice of the degrees of time--variation in the regression coefficients.
    }
  \item \code{vhighmp_DMS}: Highest posterior model probability.
   \item \code{vhighmpTop01_DMS}: Sum of the 10\% highest posterior model probabilities.
 }
 and \code{iBurnPeriod} which is an integer indicating the length of the burn-in period. For instance, if \code{iBurnPeriod = 50} the first 50 observations are removed from the output. By default \code{iBurnPeriod = NULL} meaning that all the observations are returned.
+}
+\references{
+Catania, Leopoldo, and Nima Nonejad. "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." arXiv preprint arXiv:1606.05656 (2016).\cr
 }
 \author{ Leopoldo Catania & Nima Nonejad }
 \keyword{classes}

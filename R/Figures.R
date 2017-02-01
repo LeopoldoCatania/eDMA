@@ -1,10 +1,10 @@
 PlotMenu <- function(sClass) {
     if (sClass == "DMA") {
-        vplotMenu = c("Point forecasts",
+        vplotMenu = c("Point forecast",
                       "Predictive likelihood",
                       "Posterior weighted average of delta",
                       "Posterior inclusion probabilities of the predictors",
-                      "Posterior probability of the degree of instability",
+                      "Posterior probabilities of the forgetting factors",
                       "Filtered estimates of the regression coefficients",
                       "Variance decomposition",
                       "Observational variance",
@@ -34,7 +34,7 @@ PlotNumber2Label <- function(PlotType) {
 
 
 LegendFunDMAclass <- function(PlotType) {
-    if (PlotType == 1 | PlotType == 14)
+    if (PlotType == 1 | PlotType == 15)
         legend("topleft", legend = c("Predicted", "Realised"), cex = 1, text.font = 2, col = c("black", "red"), lty = c(1, NA), bg = "white",
             pch = c(NA, 1))
 }

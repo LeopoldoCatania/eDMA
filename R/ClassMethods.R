@@ -7,6 +7,7 @@ setMethod("show", "DMA", function(object) {
   iM = object@Est$iM
   vDelta = object@model$vDelta
   iD = length(vDelta)
+  dBeta = object@model$dBeta
   dAlpha = object@model$dAlpha
   bZellnerPrior = object@model$bZellnerPrior
   dG = object@model$dG
@@ -26,6 +27,7 @@ setMethod("show", "DMA", function(object) {
   cat(paste("\nn     =", iK))
   cat(paste("\nd     =", iD))
   cat(paste("\nAlpha =", dAlpha))
+  cat(paste("\nBeta  =", dBeta))
   cat(paste("\nModel combinations =", iM))
   cat(paste("\nModel combinations including averaging over delta =", iM*iD))
   cat(paste("\n------------------------------------------"))
@@ -97,7 +99,7 @@ setMethod("as.data.frame", signature(x = "DMA"), function(x, which, iBurnPeriod 
   if (!is.null(iBurnPeriod)) {
     vY = vY[-c(1:iBurnPeriod)]
     vDates = vDates[-c(1:iBurnPeriod)]
-    for(v in 1:length(Est)){
+    for (v in 1:length(Est)) {
       if (is.matrix(Est[[v]])) {
         Est[[v]] = Est[[v]][-c(1:iBurnPeriod), ]
       } else {
@@ -149,7 +151,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
     mF = mF[-c(1:iBurnPeriod), ]
     vDates = vDates[-c(1:iBurnPeriod)]
 
-    for(v in 1:length(Est)){
+    for (v in 1:length(Est)) {
       if (is.matrix(Est[[v]])) {
         Est[[v]] = Est[[v]][-c(1:iBurnPeriod), ]
       } else {
@@ -163,16 +165,15 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
   PlotType = 1
   while (PlotType > 0) {
     if (is.null(which)) {
-      cat(paste("Print 1-11 or 0 to exit"))
+      cat(paste("Type 1-", length(PlotMenu("DMA")), " or 0 to exit", sep = ""))
       PlotType = menu(PlotMenu("DMA"))
 
       if (PlotType > 0) {
         PlotLabel   = PlotNumber2Label(PlotType)
         series2plot = Est[[PlotLabel]]
+        if (PlotLabel == "mvdec")
+          colnames(series2plot) = c("vtotal", "vobs", "vcoeff", "vmod", "vtvp")
       }
-
-      if(PlotLabel == "mvdec")
-        colnames(series2plot) = c("vtotal", "vobs", "vcoeff", "vmod", "vtvp")
 
     } else {
       if (which == "mtheta")
@@ -196,7 +197,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
         lines(vDates[-1], series2plot[-1], col = "black")
         if (PlotType == 1 | PlotType == 15)
           points(vDates, vY, col = "red")
-        if( !is.numeric(vDates) ){
+        if (!is.numeric(vDates)) {
           axis.Date(1, at = seq(min(vDates), max(vDates) + 300, "year"))
           axis.Date(1, at = seq(min(vDates), max(vDates) + 300, "quarter"), labels = FALSE, tcl = -0.2)
         } else {
@@ -332,7 +333,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
               }
               Start = Start + 10
               if (j < nPlot)
-                PlotType2 = readline("Print enter for next figures or 0 to exit\n:")
+                PlotType2 = readline("Hit enter for next figures or 0 to exit\n:")
 
             }
           }
@@ -351,9 +352,9 @@ setMethod("coef", signature(object = "DMA"), function(object, iBurnPeriod = NULL
   return(mTheta)
 })
 
-setMethod("residuals",  signature(object = "DMA"), function(object, standardize = FALSE,  Type = "DMA" ,iBurnPeriod = NULL ) {
-  if (Type=="DMA") vres = as.data.frame(object, which = "veps", iBurnPeriod = iBurnPeriod)
-  if (Type=="DMS") vres = as.data.frame(object, which = "veps_DMS", iBurnPeriod = iBurnPeriod)
+setMethod("residuals",  signature(object = "DMA"), function(object, standardize = FALSE,  type = "DMA", iBurnPeriod = NULL ) {
+  if (type == "DMA") vres = as.data.frame(object, which = "veps", iBurnPeriod = iBurnPeriod)
+  if (type == "DMS") vres = as.data.frame(object, which = "veps_DMS", iBurnPeriod = iBurnPeriod)
 
   if (standardize) vres = vres/sd(vres)
 
@@ -373,10 +374,28 @@ pred.like = function(object, ...) {
   UseMethod("pred.like")
 }
 
-setMethod("pred.like",  signature(object = "DMA"), function(object, Type = "DMA", iBurnPeriod = NULL ) {
+setMethod("pred.like",  signature(object = "DMA"), function(object, type = "DMA", iBurnPeriod = NULL ) {
 
-  if (Type=="DMA") vPredLike = as.data.frame(object, which = "vLpdfhat", iBurnPeriod = iBurnPeriod)
-  if (Type=="DMS") vPredLike = as.data.frame(object, which = "vLpdfhat_DMS", iBurnPeriod = iBurnPeriod)
+  if (type == "DMA") vPredLike = as.data.frame(object, which = "vLpdfhat", iBurnPeriod = iBurnPeriod)
+  if (type == "DMS") vPredLike = as.data.frame(object, which = "vLpdfhat_DMS", iBurnPeriod = iBurnPeriod)
 
   return(vPredLike)
+})
+
+
+getLastForecast = function(object, ...) {
+  UseMethod("getLastForecast")
+}
+
+setMethod("getLastForecast",  signature(object = "DMA"), function(object) {
+
+  lOut = NULL
+
+  if (object@Est[["LastForecast"]]$bForecast) {
+    lOut = object@Est[["LastForecast"]][1:2]
+  } else {
+    stop("The last observation is available. Please use the standard as.data.frame() method. See help(DMA).")
+  }
+
+  return(lOut)
 })

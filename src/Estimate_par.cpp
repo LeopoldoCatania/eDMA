@@ -12,13 +12,15 @@ using namespace arma;
 
 
 //[[Rcpp::export]]
-List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep, bool bZellnerPrior=true, double dG=50.0,int iCores=2){
+List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep,
+                          double dBeta, bool bZellnerPrior = true, double dG = 50.0,int iCores = 2){
   List lOut;
+
 #if defined(_OPENMP)
   omp_set_num_threads(iCores);
 
   // memory allocation
-  int k,i,j,d, iK = mX.n_cols, iT = vY.size(), iD = vDelta.size();
+  int k, i, j, d, iK = mX.n_cols, iT = vY.size(), iD = vDelta.size();
 
   field<uvec> fuv_Foo = PowerSet2_f(iK,vKeep);
 
@@ -34,40 +36,42 @@ List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double d
   field<cube> fcmm(iM);
   arma::vec   vA;
   arma::vec   vf(iM);
-  arma::cube  cS_DLM(2,iM,iD);
+  arma::cube  cS_DLM(2, iM, iD);
 
   arma::vec  vLpdf_DLM(iM);
-  double  dmFmRmF_DLM=0.0;
+  double  dmFmRmF_DLM = 0.0;
 
-  double  dn=0.0;
-  double  dQ=0.0;
-  double  de=0.0;
+  double  dn = 0.0;
+  double  dQ = 0.0;
+  double  de = 0.0;
 
   arma::uvec vFoo;
   arma::uvec vInt(1);
 
   int iK_foo;
 
-  for(j=0;j<iM;j++){
-    vFoo = fuv_Foo(j);
+  for (j = 0; j<iM; j++) {
+
+    vFoo       = fuv_Foo(j);
     iK_foo     = vFoo.size();
-    fcC(j)     = zeros<cube>(iK_foo,iK_foo,iD);
-    fcmm(j)    = zeros<cube>(iK_foo,2,iD);
+    fcC(j)     = zeros<cube>(iK_foo, iK_foo, iD);
+    fcmm(j)    = zeros<cube>(iK_foo, 2, iD);
+
   }
   // DMA memory
-  arma::mat mpm_DMA(iD,iM); mpm_DMA.fill(1.0/iM);
+  arma::mat mpm_DMA(iD, iM); mpm_DMA.fill(1.0/iM);
   //
-  double dsumprob_DMA,dsumx_DMA,dsum_DMA;
+  double dsumprob_DMA, dsumx_DMA, dsum_DMA;
   //
   // DMA-Delta memory
-  arma::cube ampmt    = zeros(2,iM,iD);
+  arma::cube ampmt    = zeros(2, iM, iD);
   //
-  arma::mat  mmm     = zeros(iD,iK);
-  arma::mat  mcov    = zeros(iD,iK);
-  arma::mat  mypred  = zeros(iT,iD);
-  arma::mat  mLpdf   = zeros(iT,iD);
-  arma::mat  mmhat   = zeros(iT,iK);
-  arma::mat  mcovhat = zeros(iT,iK);
+  arma::mat  mmm     = zeros(iD, iK);
+  arma::mat  mcov    = zeros(iD, iK);
+  arma::mat  mypred  = zeros(iT, iD);
+  arma::mat  mLpdf   = zeros(iT, iD);
+  arma::mat  mmhat   = zeros(iT, iK);
+  arma::mat  mcovhat = zeros(iT, iK);
   arma::vec  vS      = zeros(iD);
   arma::vec  vFmRmF  = zeros(iD);
   arma::vec  vyhati  = zeros(iD);
@@ -78,10 +82,11 @@ List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double d
 
   arma::vec vpmt2_DMAD(iM);vpmt2_DMAD.fill(1.0/(iM));
 
+
   arma::mat mincpmt=zeros(iT,iK);
   arma::vec vsize(iT);vsize.zeros();
 
-  double dsumx_DMAD,dsum_DMAD,dsumprob_DMAD,dSum_foo=0.0,dSum_foo2=0.0;
+  double dsumx_DMAD, dsum_DMAD, dsumprob_DMAD, dSum_foo = 0.0, dSum_foo2 = 0.0;
   arma::mat mFoo_DMAD;
 
   int iC=0;
@@ -97,11 +102,11 @@ List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double d
   arma::vec vShat(iT);//
   arma::vec vdeltahat(iT);//
 
-  arma::vec vobs(iT);
-  arma::vec vcoeff(iT);
-  arma::vec vmod(iT);
-  arma::vec vtvp(iT);
-  arma::vec vtotal(iT);
+  arma::vec vobs(iT); vobs.zeros();
+  arma::vec vcoeff(iT); vcoeff.zeros();
+  arma::vec vmod(iT); vmod.zeros();
+  arma::vec vtvp(iT); vtvp.zeros();
+  arma::vec vtotal(iT); vtotal.zeros();
 
   vdeltahat(0) = accu(vDelta.t() % mpmt_DMAD.row(0));
 
@@ -195,7 +200,7 @@ List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double d
     vFmRmF.zeros();
     vX_t = mX.row(i);
     // Do DLM for each j at time t
-    dn         += 1.0;
+    dn = dBeta * dn + 1.0;
     for(d = 0;d<iD;d++){
       mFoo1.zeros();
       mFoo2.zeros();
@@ -214,9 +219,10 @@ List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double d
           de                        = vY(i) - vf(j) ;
           vA                        = mR*vX_t_foo.t()/dQ  ;
           fcmm(j).slice(d).col(1)   = fcmm(j).slice(d).col(0) + vA * de ;
-          cS_DLM(1,j,d)             = cS_DLM(0,j,d)+(cS_DLM(0,j,d)/ (dn-1) )*(( pow(de ,2.0)/dQ  ) - 1.0);
-          fcC(j).slice(d)           = cS_DLM(1,j,d)*( mR-vA*vA.t()*dQ  )/cS_DLM(0,j,d);
-          vLpdf_DLM(j)              = Rf_dt(de /pow(dQ  ,0.5),dn,1) - 0.5*log(dQ );
+          cS_DLM(1,j,d)             = cS_DLM(0,j,d)+(cS_DLM(0,j,d)/dn )*(( pow(de ,2.0)/dQ  ) - 1.0);
+          fcC(j).slice(d)           = mR - vA*vA.t()*dQ;
+
+          vLpdf_DLM(j)              = Rf_dt(de /pow(dQ  ,0.5),dn, 1) - 0.5*log(dQ );
           dmFmRmF_DLM               = as_scalar(vX_t_foo*mR*vX_t_foo.t());
           //
           dSum_foo              += ampmt(0,j,d) * dmFmRmF_DLM;//
@@ -344,6 +350,7 @@ List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double d
   lOut["mLpdf"] = mLpdf;
   lOut["vShat"] = vShat;
   lOut["vdeltahat"] = vdeltahat;
+
   // variance
   arma::mat mvdec(iT, 5);
 
@@ -370,7 +377,7 @@ List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double d
   //
 #else
   Rf_warning("OpenMP is not available. Sequential processing is used.");
-  lOut = funcEstimate_Eff(vY, mX, vDelta, dAlpha, vKeep, bZellnerPrior, dG);
+  lOut = funcEstimate_Eff(vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG);
 #endif
   return lOut;
 }

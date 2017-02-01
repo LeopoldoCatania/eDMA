@@ -3,16 +3,16 @@
 \alias{eDMA}
 \docType{package}
 \title{
-Dynamic Model Averaging with Grid Search
+Dynamic Model Averaging with Modifications
 }
 \description{
-Perform Dynamic Model Averaging with grid search as in Dangl and Halling (2012) using parallel computing.
+Perform Dynamic Model Averaging with modifications introduced in Dangl and Halling (2012) using parallel computing.
 }
 \details{
 \tabular{ll}{
 Package: \tab eDMA\cr
 Type: \tab Package\cr
-Version: \tab 1.3-2\cr
+Version: \tab 1.4-0\cr
 Date: \tab 2016-11-24\cr
 License: \tab GPL (>= 2)\cr
 }
@@ -41,7 +41,7 @@ library(eDMA)
 data("USData")
 
 ## do DMA, keep the first three predictors fixed and the intercept
-Fit = DMA(GDPDEF ~ Lag(GDPDEF, 1) + Lag(GDPDEF, 2) + Lag(GDPDEF, 3) +
+Fit <- DMA(GDPDEF ~ Lag(GDPDEF, 1) + Lag(GDPDEF, 2) + Lag(GDPDEF, 3) +
             Lag(ROUTP, 1) + Lag(UNEMP, 1), data = USData, vDelta = c(0.9,0.95,0.99),
              vKeep = c(1, 2, 3, 4))
 

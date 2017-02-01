@@ -11,7 +11,7 @@
 }
 \arguments{
 \item{iT}{
-\code{numeric}, number of observation to simulate
+\code{numeric}, number of observation to simulate.
 }
 \item{mX}{
 \code{matrix} of dimension \code{iT} x N m where N is the number of covariates.
@@ -49,18 +49,18 @@ West, Mike. Bayesian forecasting. John Wiley & Sons, Inc., 1999.
 
 set.seed(7892)
 
-iT = 500
-iK = 3
+iT <- 500
+iK <- 3
 
-dV = 0.1
-mW = diag(iK + 1) * 0.01
-dPhi = 1
+dV <- 0.1
+mW <- diag(iK + 1) * 0.01
+dPhi <- 1
 
-vBeta0 = rep(0, iK + 1)
-mX = cbind(1, matrix(rnorm(iT * (iK)), iT, iK))
+vBeta0 <- rep(0, iK + 1)
+mX <- cbind(1, matrix(rnorm(iT * (iK)), iT, iK))
 
-lOut = SimulateDLM(iT, mX, vBeta0, mW, dV, dPhi)
-vY = lOut$vY
+lOut <- SimulateDLM(iT, mX, vBeta0, mW, dV, dPhi)
+vY <- lOut$vY
 
 }
 }

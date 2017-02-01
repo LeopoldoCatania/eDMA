@@ -14,27 +14,27 @@ This is the simulated dataset used in Section 4.1 of Catania and Nonejad (2016).
 
 set.seed(7892)
 
-iT = 500
-iK = 3
+iT <- 500
+iK <- 3
 
-dV = 0.1
-mW = diag(iK + 1) * 0.01
-dPhi = 1
+dV <- 0.1
+mW <- diag(iK + 1) * 0.01
+dPhi <- 1
 
-vBeta0 = rep(0, iK + 1)
-mX = cbind(1, matrix(rnorm(iT * (iK)), iT, iK))
+vBeta0 <- rep(0, iK + 1)
+mX <- cbind(1, matrix(rnorm(iT * (iK)), iT, iK))
 
-lOut = SimulateDLM(iT, mX, vBeta0, mW, dV, dPhi)
-vY = lOut$vY
+lOut <- SimulateDLM(iT, mX, vBeta0, mW, dV, dPhi)
+vY <- lOut$vY
 
-mX = mX[, -1]
+mX <- mX[, -1]
 
-iK_Add = 2
+iK_Add <- 2
 
-mX_add = matrix(rnorm(iT * iK_Add), iT, iK_Add)
+mX_add <- matrix(rnorm(iT * iK_Add), iT, iK_Add)
 
-SimData = cbind(y = vY, mX, mX_add)
-colnames(SimData) = c("y", paste("x", 2:(iK + iK_Add + 1), sep = ""))
+SimData <- cbind(y = vY, mX, mX_add)
+colnames(SimData) <- c("y", paste("x", 2:(iK + iK_Add + 1), sep = ""))
 
 }
 }

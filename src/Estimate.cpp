@@ -6,11 +6,11 @@ using namespace Rcpp;
 using namespace arma;
 
 //[[Rcpp::export]]
-List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha,arma::vec vKeep, bool bZellnerPrior=true, double dG=50.0){
+List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep,
+                      double dBeta, bool bZellnerPrior = true, double dG = 50.0){
 
   // memory allocation
   int k,i,j,d, iK = mX.n_cols, iT = vY.size(), iD = vDelta.size();
-
   field<uvec> fuv_Foo = PowerSet2_f(iK,vKeep);
 
   int iM = fuv_Foo.size();
@@ -48,7 +48,7 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
   // DMA memory
   arma::mat mpm_DMA(iD,iM); mpm_DMA.fill(1.0/iM);
   //
-  double dsumprob_DMA,dsumx_DMA,dsum_DMA;
+  double dsumprob_DMA, dsumx_DMA, dsum_DMA;
   //
   // DMA-Delta memory
   arma::cube ampmt    = zeros(2,iM,iD);
@@ -88,11 +88,11 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
   arma::vec vShat(iT);//
   arma::vec vdeltahat(iT);//
 
-  arma::vec vobs(iT);
-  arma::vec vcoeff(iT);
-  arma::vec vmod(iT);
-  arma::vec vtvp(iT);
-  arma::vec vtotal(iT);
+  arma::vec vobs(iT); vobs.zeros();
+  arma::vec vcoeff(iT); vcoeff.zeros();
+  arma::vec vmod(iT); vmod.zeros();
+  arma::vec vtvp(iT); vtvp.zeros();
+  arma::vec vtotal(iT); vtotal.zeros();
 
   arma::vec vsize(iT);vsize.zeros();
 
@@ -122,29 +122,42 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
   double dS0;
 
   dn          = 2.0;
-  for(d = 0;d<iD;d++){
+
+  for (d = 0; d<iD; d++) {
+
     ampmt.slice(d).row(0).fill(1.0/iM);
-    for(j = 0;j<iM;j++){
-      // vpmt2_DMAD(j) += ampmt(0,j,d) * mpmt_DMAD(0,d);
+
+    for (j = 0; j<iM; j++) {
+
       vFoo    = fuv_Foo(j);
       mX_foo  = mX.cols(vFoo);
       iK_foo  = vFoo.size();
       vTheta0 = zeros(iK_foo);
-      if(bZellnerPrior){
+
+      if (bZellnerPrior) {
+
         invFoo   = arma::inv(mX_foo.t()*mX_foo);
         dS0      = (1.0/(iT-1.0))*as_scalar(vY.t()*(eye(iT,iT)-mX_foo*invFoo*mX_foo.t())*vY);
         mVtheta0 = dG*dS0*invFoo;
-      }else{
+
+      } else {
+
         mVtheta0 = dG*eye(iK_foo,iK_foo);
+
       }
+
       mR            = mVtheta0;
       vf(j)         = as_scalar(mX_foo.row(0) * vTheta0);
       dQ            = as_scalar(mX_foo.row(0) * mR * mX_foo.row(0).t());
       de            = vY(0)-vf(j);
       vA            = mR*mX_foo.row(0).t() / dQ  ;
+
       fcmm(j).slice(d).col(0) = vTheta0 + vA  * de  ;
+
       cS_DLM(0,j,d)    = (pow(vY(0),2.0)+( pow(de ,2.0))/dQ )/dn;
+
       fcC(j).slice(d)  = mVtheta0;
+
     }
   }
 
@@ -181,7 +194,8 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
     vFmRmF.zeros();
     vX_t = mX.row(i);
     // Do DLM for each j at time t
-    dn         += 1.0;
+    dn = dBeta * dn + 1.0;
+
     for(d = 0;d<iD;d++){
       mFoo1.zeros();
       mFoo2.zeros();
@@ -194,9 +208,11 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
         de                        = vY(i) - vf(j) ;
         vA                        = mR*vX_t_foo.t()/dQ  ;
         fcmm(j).slice(d).col(1)   = fcmm(j).slice(d).col(0) + vA * de ;
-        cS_DLM(1,j,d)             = cS_DLM(0,j,d)+(cS_DLM(0,j,d)/ (dn-1) )*(( pow(de ,2.0)/dQ  ) - 1.0);
-        fcC(j).slice(d)           = cS_DLM(1,j,d)*( mR-vA*vA.t()*dQ  )/cS_DLM(0,j,d);
-        vLpdf_DLM(j)            = Rf_dt(de /pow(dQ  ,0.5),dn,1) - 0.5*log(dQ );
+        cS_DLM(1,j,d)             = cS_DLM(0,j,d)+(cS_DLM(0,j,d)/ dn )*(( pow(de ,2.0)/dQ  ) - 1.0);
+        vLpdf_DLM(j)              = Rf_dt(de /pow(dQ  ,0.5),dn,1) - 0.5*log(dQ );
+
+        fcC(j).slice(d)           = mR - vA*vA.t() * dQ;
+
         dmFmRmF_DLM             = as_scalar(vX_t_foo*mR*vX_t_foo.t()); // not initialised
         //
         vFmRmF(d)               += ampmt(0,j,d) * dmFmRmF_DLM;
@@ -224,7 +240,7 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
       mypred(i,d)           = accu(ampmt.slice(d).row(0) % vf.t());
       vS(d)               = accu(ampmt.slice(d).row(0) % cS_DLM.slice(d).row(1));
       //
-      vyhati(d) = accu(  pow(vf-mypred(i,d),2.0) % ampmt.slice(d).row(1).t());
+      vyhati(d) = accu(pow(vf-mypred(i,d),2.0) % ampmt.slice(d).row(1).t());
 
       // Do DMS conditionally on delta
       vf_DMS(d)    = vf(mMax_DMS_ModelGivenDelta(d, i-1));
@@ -289,7 +305,7 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
     vsize_DMS(i)    = vFoo.size();
 
     // store output quantities
-    vyhat(i)   = accu(mypred.row(i) % mpmt_DMAD.row(i));
+    vyhat(i)     = accu(mypred.row(i) % mpmt_DMAD.row(i));
     vLpdfhat(i)  = log(accu(exp(mLpdf.row(i)) % mpmt_DMAD.row(i)));
     vShat(i)     = accu(vS.t() % mpmt_DMAD.row(i));
     vdeltahat(i) = accu(vDelta.t() % mpmt_DMAD.row(i));
@@ -344,4 +360,5 @@ List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlph
 
 
 }
+
 
