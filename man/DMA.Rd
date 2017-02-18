@@ -55,7 +55,7 @@ An object of the class \code{DMA}, see \link{DMA-class}.
 }
 \references{
 
-Beckmann, J., & Schussler, R. (2014). Forecasting Equity Premia using Bayesian Dynamic Model Averaging (No. 2914). Center for Quantitative Economics (CQE), University of Muenster. \url{http://www.wiwi.uni-muenster.de/cqe/forschung/publikationen/cqe-working-papers/CQE_WP_29_2014.pdf}\cr
+Beckmann, J., & Schussler, R. (2014). Forecasting Equity Premia using Bayesian Dynamic Model Averaging (No. 2914). Center for Quantitative Economics (CQE), University of Muenster. \cr
 
 Dangl, T., & Halling, M. (2012). Predictive regressions with time--varying coefficients. \emph{Journal of Financial Economics}, \bold{106(1)}, 157--181.  \doi{doi:10.1016/j.jfineco.2012.04.003}.\cr
 

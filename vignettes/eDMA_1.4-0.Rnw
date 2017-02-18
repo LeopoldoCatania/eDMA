@@ -172,7 +172,7 @@ $1980$s or the early $2000$s. Furthermore, even in this simple model,
 we still observe some time--variation in the AR coefficients. We then extend the plain AR(2) model to also include the
 lagged unemployment rate (UNEMP) as a regressor. This way, we end
 up with a basic Philips curve. In panel (c), we report the recursive
-OLS estimates of UNEMP and in panel (d), we report the recursive p--values associated to the null hypothesis that this estimate is equal to zero. Panel (d) shows that the unemployment rate in some periods seems to be an important predictor of inflation especially at the start of the sample.
+OLS estimates of UNEMP and in panel (d), we report the recursive p--values associated to the null hypothesis that this estimate is equal to zero. Panel (d) shows that the unemployment rate in some periods seems to be a usefull predictor of inflation.
 
 \begin{figure}
 \centering
