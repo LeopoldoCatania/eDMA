@@ -1,5 +1,5 @@
 # eDMA
-Perform Dynamic Model Averaging with grid search as in Dangl and Halling (2012) using parallel computing.
+Perform Dynamic Model Averaging with grid search as in [Dangl and Halling (2012)](http://www.sciencedirect.com/science/article/pii/S0304405X12000633) using parallel computing.
 
 [![CRAN](http://www.r-pkg.org/badges/version/eDMA)](https://cran.r-project.org/package=eDMA) 
 [![Downloads](http://cranlogs.r-pkg.org/badges/eDMA?color=brightgreen)](http://www.r-pkg.org/pkg/eDMA)
