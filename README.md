@@ -8,7 +8,7 @@ Perform Dynamic Model Averaging with grid search as in [Dangl and Halling (2012)
 [![Github Issues](http://githubbadges.herokuapp.com/LeopoldoCatania/eDMA/issues.svg)](https://github.com/LeopoldoCatania/eDMA/issues)
 
 `eDMA` ([Catania and Nonejad, 2016](https://CRAN.R-project.org/package=eDMA)) implements the Dynamic Model Averaging (DMA) estimation technique of 
-([Raftery, Karny, and Ettler, 2010](http://www.tandfonline.com/doi/abs/10.1198/TECH.2009.08104)) with the modifications of [Dangl and Halling (2012)](http://www.sciencedirect.com/science/article/pii/S0304405X12000633) in R.
+[Raftery, Karny, and Ettler (2010)](http://www.tandfonline.com/doi/abs/10.1198/TECH.2009.08104) with the modifications of [Dangl and Halling (2012)](http://www.sciencedirect.com/science/article/pii/S0304405X12000633) in R.
 
 
 The latest stable version of `eDMA` is available at 'https://CRAN.R-project.org/package=eDMA'.
