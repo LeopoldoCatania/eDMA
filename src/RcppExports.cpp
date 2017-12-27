@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // PowerSet
 List PowerSet(int iK);
-RcppExport SEXP eDMA_PowerSet(SEXP iKSEXP) {
+RcppExport SEXP _eDMA_PowerSet(SEXP iKSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +19,7 @@ END_RCPP
 }
 // funcEstimate_Eff
 List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep, double dBeta, bool bZellnerPrior, double dG);
-RcppExport SEXP eDMA_funcEstimate_Eff(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP) {
+RcppExport SEXP _eDMA_funcEstimate_Eff(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -37,7 +37,7 @@ END_RCPP
 }
 // funcEstimate_Eff_par
 List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep, double dBeta, bool bZellnerPrior, double dG, int iCores);
-RcppExport SEXP eDMA_funcEstimate_Eff_par(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP, SEXP iCoresSEXP) {
+RcppExport SEXP _eDMA_funcEstimate_Eff_par(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP, SEXP iCoresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -56,7 +56,7 @@ END_RCPP
 }
 // SimulateDLM
 List SimulateDLM(int iT, arma::mat mX, arma::vec vBeta0, arma::mat mW, double dV, double dPhi);
-RcppExport SEXP eDMA_SimulateDLM(SEXP iTSEXP, SEXP mXSEXP, SEXP vBeta0SEXP, SEXP mWSEXP, SEXP dVSEXP, SEXP dPhiSEXP) {
+RcppExport SEXP _eDMA_SimulateDLM(SEXP iTSEXP, SEXP mXSEXP, SEXP vBeta0SEXP, SEXP mWSEXP, SEXP dVSEXP, SEXP dPhiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -69,4 +69,17 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(SimulateDLM(iT, mX, vBeta0, mW, dV, dPhi));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_eDMA_PowerSet", (DL_FUNC) &_eDMA_PowerSet, 1},
+    {"_eDMA_funcEstimate_Eff", (DL_FUNC) &_eDMA_funcEstimate_Eff, 8},
+    {"_eDMA_funcEstimate_Eff_par", (DL_FUNC) &_eDMA_funcEstimate_Eff_par, 9},
+    {"_eDMA_SimulateDLM", (DL_FUNC) &_eDMA_SimulateDLM, 6},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_eDMA(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

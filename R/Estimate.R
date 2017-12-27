@@ -19,7 +19,7 @@ DMA <- function(formula, data = NULL, vDelta = c(0.9, 0.95, 0.99), dAlpha = 0.99
 
   ModelFrame = model.frame(formula , data = data, na.action = na.omit_new)
 
-  vY = ModelFrame[, 1]
+  vY = as.numeric(ModelFrame[, 1])
   mF = model.matrix(formula, data = ModelFrame)
 
   if (is.na(tail(vY, 1))) {
