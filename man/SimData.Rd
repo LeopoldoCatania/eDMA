@@ -40,7 +40,8 @@ colnames(SimData) <- c("y", paste("x", 2:(iK + iK_Add + 1), sep = ""))
 }
 
 \references{
-Catania, Leopoldo, and Nima Nonejad. "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." arXiv preprint arXiv:1606.05656 (2016).\cr
+Catania, Leopoldo, and Nima Nonejad (2018). "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." Journal of Statistical Software, 84(11), 1-39. \doi{10.18637/jss.v084.i11}.\cr
+
 West, Mike. Bayesian forecasting. John Wiley & Sons, Inc., 1999.
 }
 \keyword{datasets}

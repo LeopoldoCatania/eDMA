@@ -39,7 +39,7 @@ An object of the class \code{list}.
 }
 \author{ Leopoldo Catania & Nima Nonejad }
 \references{
-Catania, Leopoldo, and Nima Nonejad. "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." arXiv preprint arXiv:1606.05656 (2016).
+Catania, Leopoldo, and Nima Nonejad (2018). "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." Journal of Statistical Software, 84(11), 1-39. \doi{10.18637/jss.v084.i11}.\cr
 
 West, Mike. Bayesian forecasting. John Wiley & Sons, Inc., 1999.
 }

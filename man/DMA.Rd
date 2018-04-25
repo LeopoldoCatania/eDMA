@@ -59,7 +59,7 @@ Beckmann, J., & Schussler, R. (2014). Forecasting Equity Premia using Bayesian D
 
 Dangl, T., & Halling, M. (2012). Predictive regressions with time--varying coefficients. \emph{Journal of Financial Economics}, \bold{106(1)}, 157--181.  \doi{doi:10.1016/j.jfineco.2012.04.003}.\cr
 
-Catania, Leopoldo, and Nima Nonejad. "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." arXiv preprint arXiv:1606.05656 (2016).\cr
+Catania, Leopoldo, and Nima Nonejad (2018). "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." Journal of Statistical Software, 84(11), 1-39. \doi{10.18637/jss.v084.i11}.\cr
 
 Paye, B.S. (2012). 'Deja vol': Predictive Regressions for Aggregate Stock Market Volatility
 Using Macroeconomic Variables.\emph{Journal of Financial Economics}, \bold{106(3)}, 527-546. ISSN 0304-405X.

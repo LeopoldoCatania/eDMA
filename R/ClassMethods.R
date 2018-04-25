@@ -20,7 +20,7 @@ setMethod("show", "DMA", function(object) {
     vNames = paste("var", 1:iK, sep = ".")
 
   cat(paste("\n------------------------------------------"))
-  cat(paste("\n-        Dynamic Model Ageraging         -"))
+  cat(paste("\n-        Dynamic Model Averaging         -"))
   cat(paste("\n------------------------------------------"))
   cat("\n\nModel Specification\t")
   cat(paste("\nT     =", iT))
@@ -170,14 +170,19 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
 
       if (PlotType > 0) {
         PlotLabel   = PlotNumber2Label(PlotType)
-        series2plot = Est[[PlotLabel]]
-        if (PlotLabel == "mvdec")
+        series2plot = as.matrix(Est[[PlotLabel]])
+        if (PlotLabel == "mvdec") {
           colnames(series2plot) = c("vtotal", "vobs", "vcoeff", "vmod", "vtvp")
+        }
+        if (PlotLabel == "mmhat") {
+          colnames(series2plot) = colnames(mF)
+        }
       }
 
     } else {
-      if (which == "mtheta")
+      if (which == "mtheta") {
         which = "mmhat"
+      }
       series2plot = as.matrix(Est[[which]])
       if (is.null(series2plot))
         stop(paste("which =", which, "is not supported."))
@@ -186,8 +191,9 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
 
     if (PlotType > 0) {
 
-      if (dev.cur() != 1)
+      if (dev.cur() != 1) {
         dev.off()
+      }
 
       if (ncol(series2plot) == 1) {
         sTitle = TitleFun("DMA", PlotType)
@@ -201,8 +207,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
           axis.Date(1, at = seq(min(vDates), max(vDates) + 300, "year"))
           axis.Date(1, at = seq(min(vDates), max(vDates) + 300, "quarter"), labels = FALSE, tcl = -0.2)
         } else {
-          foo = vDates[c(1, seq(0, iT, ceiling((iT)/20))[-1])]
-          axis(1, at = foo, labels = foo)
+          axis(1)
         }
         LegendFun("DMA", PlotType)
 
@@ -233,14 +238,13 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
             plot(vDates, series2plot[, i], type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = vLim)
             grid(nx = 10, ny = 10, col = "gray", lty = "dotted")
             lines(vDates[-1], series2plot[-1, i], col = "black")
-            axis(4, at = mean(vLim), labels = VarNames[i], tick = F, padj = -1)
+            axis(4, at = mean(vLim), labels = VarNames[i], tick = FALSE, padj = -1)
           }
           if (is(vY, "xts")) {
             axis.Date(1, at = seq(min(vDates), max(vDates), "year"))
             axis.Date(1, at = seq(min(vDates), max(vDates), "quarter"), labels = FALSE, tcl = -0.2)
           } else {
-            foo = vDates[c(1, seq(0, iT, ceiling((iT)/20))[-1])]
-            axis(1, at = foo, labels = foo)
+            axis(1)
           }
 
         } else if (iV == 6 | iV == 8 ) {
@@ -271,7 +275,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
               plot(vDates, series2plot[, i], type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = vLim)
               grid(nx = 10, ny = 10, col = "gray", lty = "dotted")
               lines(vDates[-1], series2plot[-1, i], col = "black")
-              axis(4, at = mean(vLim), labels = VarNames[i], tick = F, padj = -1)
+              axis(4, at = mean(vLim), labels = VarNames[i], tick = FALSE, padj = -1)
 
               if (any(i == plotSeq - 1) | (i == iV)) {
 
@@ -279,8 +283,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
                   axis.Date(1, at = seq(min(vDates), max(vDates), "year"))
                   axis.Date(1, at = seq(min(vDates), max(vDates), "quarter"), labels = FALSE, tcl = -0.2)
                 } else {
-                  foo = vDates[c(1, seq(0, iT, ceiling((iT)/20))[-1])]
-                  axis(1, at = foo, labels = foo)
+                  axis(1)
                 }
 
               }
@@ -316,7 +319,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
                   plot(vDates, series2plot[, i], type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = vLim)
                   grid(nx = 10, ny = 10, col = "gray", lty = "dotted")
                   lines(vDates[-1], series2plot[-1, i], col = "black")
-                  axis(4, at = mean(vLim), labels = VarNames[i], tick = F, padj = -1)
+                  axis(4, at = mean(vLim), labels = VarNames[i], tick = FALSE, padj = -1)
 
                   if (any(i == plotSeq - 1) | (i == iV)) {
 
@@ -324,8 +327,7 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
                       axis.Date(1, at = seq(min(vDates), max(vDates), "year"))
                       axis.Date(1, at = seq(min(vDates), max(vDates), "quarter"), labels = FALSE, tcl = -0.2)
                     } else {
-                      foo = vDates[c(1, seq(0, iT, ceiling((iT)/20))[-1])]
-                      axis(1, at = foo, labels = foo)
+                      axis(1)
                     }
 
                   }

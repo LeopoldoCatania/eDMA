@@ -17,15 +17,15 @@ BacktestDMA <- function(object, iBurnPeriod = NULL){
   vEps_DMS  = (object@Est$vyhat_DMS - vY)[-vBurnIN]
   vLpdf_DMS = object@Est$vLpdfhat_DMS[-vBurnIN]
 
-  mOut = matrix(NA, 3, 2, dimnames = list(c("MSE", "MAD", "Log-predictive Likehood"), c("DMA", "DMS")))
+  mOut = matrix(NA, 3, 2, dimnames = list(c("MSE", "MAD", "Log-predictive Likelihood"), c("DMA", "DMS")))
 
   mOut["MSE", "DMA"] = mean(vEps_DMA^2.0)
   mOut["MSE", "DMS"] = mean(vEps_DMS^2.0)
   mOut["MAD", "DMA"] = mean(abs(vEps_DMA))
   mOut["MAD", "DMS"] = mean(abs(vEps_DMS))
 
-  mOut["Log-predictive Likehood", "DMA"] = sum(vLpdf_DMA)
-  mOut["Log-predictive Likehood", "DMS"] = sum(vLpdf_DMS)
+  mOut["Log-predictive Likelihood", "DMA"] = sum(vLpdf_DMA)
+  mOut["Log-predictive Likelihood", "DMS"] = sum(vLpdf_DMS)
 
   return(mOut)
 

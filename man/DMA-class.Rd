@@ -81,7 +81,7 @@ The \code{as.data.frame()} method permits to extract several estimated quantitie
 and \code{iBurnPeriod} which is an integer indicating the length of the burn-in period. For instance, if \code{iBurnPeriod = 50} the first 50 observations are removed from the output. By default \code{iBurnPeriod = NULL} meaning that all the observations are returned.
 }
 \references{
-Catania, Leopoldo, and Nima Nonejad. "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." arXiv preprint arXiv:1606.05656 (2016).\cr
+Catania, Leopoldo, and Nima Nonejad (2018). "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." Journal of Statistical Software, 84(11), 1-39. \doi{10.18637/jss.v084.i11}.\cr
 }
 \author{ Leopoldo Catania & Nima Nonejad }
 \keyword{classes}

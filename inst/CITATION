@@ -1,0 +1,23 @@
+bibentry(bibtype = "Article",
+  title        = "Dynamic Model Averaging for Practitioners in Economics and Finance: The {eDMA} Package",
+  author       = c(person(given = "Leopoldo",
+                          family = "Catania",
+                          email = "leopoldo.catania@econ.au.dk"),
+                   person(given = "Nima",
+                          family = "Nonejad",
+                          email = "nimanonejad@gmail.com")),
+  journal      = "Journal of Statistical Software",
+  year         = "2018",
+  volume       = "84",
+  number       = "11",
+  pages        = "1--39",
+  doi          = "10.18637/jss.v084.i11",
+
+  header       = "To cite eDMA in publications use:",
+  textVersion  =
+  paste("Leopoldo Catania, Nima Nonejad (2018).",
+        "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package.",
+        "Journal of Statistical Software, 84(11), 1-39.",
+        "doi:10.18637/jss.v084.i11")
+)
+

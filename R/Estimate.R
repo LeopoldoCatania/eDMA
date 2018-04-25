@@ -13,8 +13,10 @@ DMA <- function(formula, data = NULL, vDelta = c(0.9, 0.95, 0.99), dAlpha = 0.99
     formula = as.formula(formula)
   }
 
-  if (!is(data, "data.frame")) {
-    data = as.data.frame(data)
+  if (!is.null(data)) {
+    if (!is(data, "data.frame")) {
+      data = as.data.frame(data)
+    }
   }
 
   ModelFrame = model.frame(formula , data = data, na.action = na.omit_new)
@@ -56,6 +58,12 @@ DMA <- function(formula, data = NULL, vDelta = c(0.9, 0.95, 0.99), dAlpha = 0.99
   if (bParallelize) {
     if (is.null(iCores)) {
       iCores = detectCores() - 1
+      ## reduce the number of cores if model complexity is low
+      ## model complexity is defined low if less than 100 models
+      ## are considered.
+      if ((((ncol(mF) - length(vKeep))^2 - 1) * length(vDelta) <= 100) & (iCores > 2)) {
+        iCores = 2
+      }
     }
     Est = funcEstimate_Eff_par(vY, mF, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, iCores)
   } else {
