@@ -25,7 +25,6 @@ An object of the class \code{matrix}.
 }
 \author{ Leopoldo Catania & Nima Nonejad }
 \examples{
-\dontrun{
 
 library(eDMA)
 
@@ -39,5 +38,4 @@ Fit <- DMA(GDPDEF ~ Lag(GDPDEF, 1) + Lag(GDPDEF, 2) + Lag(GDPDEF, 3) +
 
 BacktestDMA(Fit, iBurnPeriod = 32)
 
-}
 }

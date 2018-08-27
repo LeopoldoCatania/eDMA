@@ -8,7 +8,6 @@ This is the simulated dataset used in Section 4.1 of Catania and Nonejad (2016).
 \usage{data(USData)}
 \format{A \link{matrix} object containing 500 x 6 simulated observations.}
 \examples{
-\dontrun{
 
 #the data set has been generated as:
 
@@ -36,7 +35,6 @@ mX_add <- matrix(rnorm(iT * iK_Add), iT, iK_Add)
 SimData <- cbind(y = vY, mX, mX_add)
 colnames(SimData) <- c("y", paste("x", 2:(iK + iK_Add + 1), sep = ""))
 
-}
 }
 
 \references{

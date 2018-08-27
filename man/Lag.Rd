@@ -25,7 +25,7 @@ An object of the class \code{numeric} or \code{matrix}.
 }
 \author{ Leopoldo Catania & Nima Nonejad }
 \examples{
-\dontrun{
+\donttest{
 #  Code chunk of Catania and Nonejad (2016) Dynamic Model Averaging
 #  for Practitioners in Economics and Finance: The eDMA Package
 library(eDMA)

@@ -44,8 +44,6 @@ Catania, Leopoldo, and Nima Nonejad (2018). "Dynamic Model Averaging for Practit
 West, Mike. Bayesian forecasting. John Wiley & Sons, Inc., 1999.
 }
 \examples{
-\dontrun{
-
 
 set.seed(7892)
 
@@ -62,5 +60,4 @@ mX <- cbind(1, matrix(rnorm(iT * (iK)), iT, iK))
 lOut <- SimulateDLM(iT, mX, vBeta0, mW, dV, dPhi)
 vY <- lOut$vY
 
-}
 }

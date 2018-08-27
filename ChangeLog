@@ -1,3 +1,9 @@
 2018-04-25  Leopoldo Catania <leopoldo.catania@uniroma2.it>
 	* DESCRIPTION (Version): New version is 1.5-1.
 	* JSS version.
+2018-07-08 Leopoldo Catania <leopoldo.catania@econ.au.dk>
+  * DESCRIPTION (Version): New version is 1.5-2.
+  * Fixing `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"
+2018-27-08 Leopoldo Catania <leopoldo.catania@econ.au.dk>
+  * DESCRIPTION (Version): New version is 1.5-3.
+  * Removing  \donttest from documentation

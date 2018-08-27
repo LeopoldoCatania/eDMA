@@ -12,8 +12,8 @@ Perform Dynamic Model Averaging with modifications introduced in Dangl and Halli
 \tabular{ll}{
 Package: \tab eDMA\cr
 Type: \tab Package\cr
-Version: \tab 1.5-1\cr
-Date: \tab 2018-04-25\cr
+Version: \tab 1.5-3\cr
+Date: \tab 2018-27-08\cr
 License: \tab GPL (>= 2)\cr
 }
 }

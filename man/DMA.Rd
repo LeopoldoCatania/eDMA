@@ -69,7 +69,7 @@ Prado, R., & West, M. (2010). Time series: modeling, computation, and inference.
 }
 \author{ Leopoldo Catania & Nima Nonejad }
 \examples{
-\dontrun{
+
 #  Code chunk of Catania and Nonejad (2016) Fast Dynamic Model Averaging
 #  for Practitioners in Economics and Finance: The eDMA Package
 library(eDMA)
@@ -83,5 +83,5 @@ Fit <- DMA(GDPDEF ~ Lag(GDPDEF, 1) + Lag(GDPDEF, 2) + Lag(GDPDEF, 3) +
              vKeep = c(1, 2, 3, 4))
 
 Fit
-}
+
 }
