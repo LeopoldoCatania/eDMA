@@ -1,5 +1,3 @@
-#exportPattern("^[[:alpha:]]+") #remove before CRAN
-#importFrom(Rcpp, evalCpp)      #remove before CRAN
 useDynLib(eDMA, .registration = TRUE)
 import(methods)
 importFrom(Rcpp, evalCpp)
