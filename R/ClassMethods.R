@@ -114,6 +114,9 @@ setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL,
   on.exit(par(old), add = TRUE)
   count <- ncol(values)
   titles <- colnames(values)
+  option <- PlotLabel2Number(which)
+  if (count == 1L && length(option) == 1L && option %in% c(1:3, 8:16))
+    titles <- TitleFun("DMA", option)
   if (is.null(titles)) titles <- if (count == 1L) which else paste(which, seq_len(count))
   perpage <- min(count, 10L)
   par(mfrow = c(ceiling(perpage / 2), if (perpage == 1L) 1L else 2L),

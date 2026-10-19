@@ -44,8 +44,23 @@ LegendFun <- function(sClass, PlotType) {
 }
 
 TitleFunClass <- function(PlotType) {
-    vNames = PlotMenu("DMA")
-    return(vNames[PlotType])
+    titles <- c("DMA point forecast",
+                "DMA predictive log likelihood",
+                "Posterior mean of delta",
+                "Posterior inclusion probabilities",
+                "Posterior probabilities of delta",
+                "Filtered regression coefficients",
+                "Predictive variance decomposition",
+                "Observation variance",
+                "Variance from coefficient uncertainty",
+                "Variance from model uncertainty",
+                "Variance from uncertainty about delta",
+                "Posterior expected model size",
+                "Size of highest-probability model",
+                "Highest posterior model probability",
+                "DMS point forecast",
+                "DMS predictive log likelihood")
+    return(titles[PlotType])
 }
 TitleFun <- function(sClass, PlotType) {
     if (sClass == "DMA")
