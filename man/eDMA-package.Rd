@@ -12,7 +12,7 @@ Perform Dynamic Model Averaging with modifications introduced in Dangl and Halli
 \tabular{ll}{
 Package: \tab eDMA\cr
 Type: \tab Package\cr
-Version: \tab 1.5-3\cr
+Version: \tab 1.5-4\cr
 Date: \tab 2018-27-08\cr
 License: \tab GPL (>= 2)\cr
 }
@@ -20,7 +20,7 @@ License: \tab GPL (>= 2)\cr
 \author{
 Leopoldo Catania & Nima Nonejad
 
-Maintainer: Leopoldo Catania <leopoldo.catania@uniroma2.it>
+Maintainer: Leopoldo Catania <leopoldo.catania@econ.au.dk>
 }
 \references{
 Raftery, Adrian E., Miroslav Karny, and Pavel Ettler. "Online prediction under model uncertainty via dynamic model averaging: Application to a cold rolling mill." Technometrics 52.1 (2010): 52-66.\cr

@@ -25,7 +25,7 @@ MS     : One-year ahead inflation expectations that come from the Reuters/Michig
 
 }
 \usage{data(USData)}
-\format{A \link{xts} object containing 206x16 observations from from 1960-01-01 to 2011-04-01.}
+\format{A \link[xts]{xts} object containing 206x16 observations from from 1960-01-01 to 2011-04-01.}
 \references{
 Groen, Jan JJ, Richard Paap, and Francesco Ravazzolo. (2013) Real--time inflation forecasting in a changing world. \emph{Journal of Business & Economic Statistics}, \bold{31.1} : 29--44.
 }
