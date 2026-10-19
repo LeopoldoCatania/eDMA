@@ -1,4 +1,5 @@
 #include <RcppArmadillo.h>
+#include <limits>
 
 using namespace Rcpp;
 using namespace arma;
@@ -19,15 +20,13 @@ int MaxFinder(arma::vec vX){
   return iMax;
 }
 
-int int_pow(int base, int exp)
-{
+int int_pow(int base, int exp) {
+  if (base < 0 || exp < 0) Rcpp::stop("Integer power requires nonnegative arguments.");
   int result = 1;
-  while (exp)
-  {
-    if (exp & 1)
-      result *= base;
-    exp /= 2;
-    base *= base;
+  for (int i=0; i<exp; ++i) {
+    if (base && result > std::numeric_limits<int>::max()/base)
+      Rcpp::stop("Integer power overflow.");
+    result *= base;
   }
   return result;
 }

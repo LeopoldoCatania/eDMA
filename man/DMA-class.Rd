@@ -18,7 +18,7 @@
 \description{
 Class for the DMA estimate.
 }
-\section{Objects from the Class}{A virtual Class: No objects may be created from it.}
+\section{Objects from the Class}{Objects are created by \code{DMA()}.}
 \section{Slots}{
   \describe{
     \item{\code{model}:}{Object of class \code{"list"}
@@ -52,12 +52,43 @@ Extract the inclusion probabilities of the regressors. This method accepts the a
 Extract the predictive log-likelihood series. This method accepts the additional argument \code{iBurnPeriod} corresponding at the length of the burn-in period. By default \code{iBurnPeriod = NULL}, i.e. all the sample is used. The additional argument \code{type} permits to choose between predictive likelihood evaluated using DMA or DMS. By default \code{type = "DMA"}.
 }
 \item{getLastForecast}{\code{signature(object = "DMA")}:
-If the last observation of the dependent variable was \code{NA}, i.e. the practitioner desidered to predict \eqn{Y_{T+1}} having a sample of length \eqn{T} (without backtesting the result), this method can be used to extract the predicted value \eqn{\hat{y_T+1} = E[y_{T+1} | F_T]} as well as the predicted variance decomposition according to Equation (12) of Catania and Nonejad (2016).
+If the last observation of the dependent variable was \code{NA}, i.e. the practitioner desidered to predict \eqn{Y_{T+1}} having a sample of length \eqn{T} (without backtesting the result), this method can be used to extract the predicted value \eqn{\hat{y_T+1} = E[y_{T+1} | F_T]} as well as the predicted variance decomposition using the prediction weights and Student-t variance convention documented in \code{DMA}.
 }
 
 }
 }
 \note{
+For compatibility, \code{as.data.frame()} returns a matrix for ordinary data,
+an xts object for Date/POSIX indexes, or a zoo object for other time indexes.
+It does not return a base data frame. Dimensions are preserved for a single
+column or a single retained observation. Burn-in must be an integer from
+zero to one less than the observed sample size. All rows, including the
+first, now contain defined prediction and filtering results.
+
+Residual standardization divides by the sample standard deviation over the
+retained residuals; it is not conditional-volatility standardization.
+\code{type} must be \code{"DMA"} or \code{"DMS"}. Plotting preserves the
+current graphics device and restores its parameters. In noninteractive use,
+the default plot is the point forecast. Nonfinite variances are omitted from
+plot lines. \code{getLastForecast()} returns \code{PointForecast},
+\code{VarianceDecomposition} and \code{ForecastDate} (NULL without an index),
+and gives an informative error if there is no forecast-only row.
+
+Additional extraction names are \code{mpmt_pred} for prediction probabilities
+over delta, \code{mLpdf} for conditional predictive log likelihoods,
+\code{vdf} for predictive degrees of freedom, and \code{mcovhat} for diagonal
+mixture variances of the plug-in filtered coefficient distributions, including
+between-component mean dispersion and zero coefficients in absent models.
+The latter are not exact conjugate Student-t posterior variances.
+Predictive variance components refer to the same distribution as the forecast
+and are calculated before observing the current response. They include the
+Student-t variance multiplier; total variance can be infinite.
+
+DMS point forecasts use nested delta/model selection. The marginal posterior
+model diagnostics need not identify that same model. The top-ten-percent
+statistic sums the largest \eqn{\lceil 0.1M\rceil} marginal probabilities.
+
+
 The \code{as.data.frame()} method permits to extract several estimated quantities. It accepts the two additional arguments: \code{which} with possible values:
 \itemize{
   \item{\code{mincpmt}}: Posterior inclusion probabilities of the predictors.
@@ -83,5 +114,5 @@ and \code{iBurnPeriod} which is an integer indicating the length of the burn-in 
 \references{
 Catania, Leopoldo, and Nima Nonejad (2018). "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." Journal of Statistical Software, 84(11), 1-39. \doi{10.18637/jss.v084.i11}.\cr
 }
-\author{ Leopoldo Catania & Nima Nonejad }
+\author{ Leopoldo Catania }
 \keyword{classes}

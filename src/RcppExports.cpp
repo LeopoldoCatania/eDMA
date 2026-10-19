@@ -12,19 +12,19 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // PowerSet
-List PowerSet(int iK);
+Rcpp::List PowerSet(double iK);
 RcppExport SEXP _eDMA_PowerSet(SEXP iKSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type iK(iKSEXP);
+    Rcpp::traits::input_parameter< double >::type iK(iKSEXP);
     rcpp_result_gen = Rcpp::wrap(PowerSet(iK));
     return rcpp_result_gen;
 END_RCPP
 }
 // funcEstimate_Eff
-List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep, double dBeta, bool bZellnerPrior, double dG);
-RcppExport SEXP _eDMA_funcEstimate_Eff(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP) {
+Rcpp::List funcEstimate_Eff(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep, double dBeta, bool bZellnerPrior, double dG, double dS0, double dN0);
+RcppExport SEXP _eDMA_funcEstimate_Eff(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP, SEXP dS0SEXP, SEXP dN0SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,13 +36,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type dBeta(dBetaSEXP);
     Rcpp::traits::input_parameter< bool >::type bZellnerPrior(bZellnerPriorSEXP);
     Rcpp::traits::input_parameter< double >::type dG(dGSEXP);
-    rcpp_result_gen = Rcpp::wrap(funcEstimate_Eff(vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG));
+    Rcpp::traits::input_parameter< double >::type dS0(dS0SEXP);
+    Rcpp::traits::input_parameter< double >::type dN0(dN0SEXP);
+    rcpp_result_gen = Rcpp::wrap(funcEstimate_Eff(vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, dS0, dN0));
     return rcpp_result_gen;
 END_RCPP
 }
 // funcEstimate_Eff_par
-List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep, double dBeta, bool bZellnerPrior, double dG, int iCores);
-RcppExport SEXP _eDMA_funcEstimate_Eff_par(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP, SEXP iCoresSEXP) {
+Rcpp::List funcEstimate_Eff_par(arma::vec vY, arma::mat mX, arma::vec vDelta, double dAlpha, arma::vec vKeep, double dBeta, bool bZellnerPrior, double dG, double iCores, double dS0, double dN0);
+RcppExport SEXP _eDMA_funcEstimate_Eff_par(SEXP vYSEXP, SEXP mXSEXP, SEXP vDeltaSEXP, SEXP dAlphaSEXP, SEXP vKeepSEXP, SEXP dBetaSEXP, SEXP bZellnerPriorSEXP, SEXP dGSEXP, SEXP iCoresSEXP, SEXP dS0SEXP, SEXP dN0SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -54,18 +56,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type dBeta(dBetaSEXP);
     Rcpp::traits::input_parameter< bool >::type bZellnerPrior(bZellnerPriorSEXP);
     Rcpp::traits::input_parameter< double >::type dG(dGSEXP);
-    Rcpp::traits::input_parameter< int >::type iCores(iCoresSEXP);
-    rcpp_result_gen = Rcpp::wrap(funcEstimate_Eff_par(vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, iCores));
+    Rcpp::traits::input_parameter< double >::type iCores(iCoresSEXP);
+    Rcpp::traits::input_parameter< double >::type dS0(dS0SEXP);
+    Rcpp::traits::input_parameter< double >::type dN0(dN0SEXP);
+    rcpp_result_gen = Rcpp::wrap(funcEstimate_Eff_par(vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, iCores, dS0, dN0));
     return rcpp_result_gen;
 END_RCPP
 }
 // SimulateDLM
-List SimulateDLM(int iT, arma::mat mX, arma::vec vBeta0, arma::mat mW, double dV, double dPhi);
+Rcpp::List SimulateDLM(double iT, arma::mat mX, arma::vec vBeta0, arma::mat mW, double dV, double dPhi);
 RcppExport SEXP _eDMA_SimulateDLM(SEXP iTSEXP, SEXP mXSEXP, SEXP vBeta0SEXP, SEXP mWSEXP, SEXP dVSEXP, SEXP dPhiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type iT(iTSEXP);
+    Rcpp::traits::input_parameter< double >::type iT(iTSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type mX(mXSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type vBeta0(vBeta0SEXP);
     Rcpp::traits::input_parameter< arma::mat >::type mW(mWSEXP);
@@ -78,8 +82,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_eDMA_PowerSet", (DL_FUNC) &_eDMA_PowerSet, 1},
-    {"_eDMA_funcEstimate_Eff", (DL_FUNC) &_eDMA_funcEstimate_Eff, 8},
-    {"_eDMA_funcEstimate_Eff_par", (DL_FUNC) &_eDMA_funcEstimate_Eff_par, 9},
+    {"_eDMA_funcEstimate_Eff", (DL_FUNC) &_eDMA_funcEstimate_Eff, 10},
+    {"_eDMA_funcEstimate_Eff_par", (DL_FUNC) &_eDMA_funcEstimate_Eff_par, 11},
     {"_eDMA_SimulateDLM", (DL_FUNC) &_eDMA_SimulateDLM, 6},
     {NULL, NULL, 0}
 };

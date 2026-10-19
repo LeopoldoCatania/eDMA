@@ -1,34 +1,17 @@
-BacktestDMA <- function(object, iBurnPeriod = NULL){
-
-  vY = object@data$vY
-  iT = length(vY)
-
+BacktestDMA <- function(object, iBurnPeriod = NULL) {
   if (is.null(iBurnPeriod)) {
-    iBurnPeriod = round(iT / 3)
-    warnings(paste("No burin in period has been selected. ", iBurnPeriod,
-                   " periods (approximately 1/3 of the sample) has been automatically selected.", sep = ""))
+    iBurnPeriod <- min(round(nrow(object@data$mF) / 3), nrow(object@data$mF) - 1L)
+    warning("No burn-in period selected; using ", iBurnPeriod,
+            " periods (approximately one third of the sample).", call. = FALSE)
   }
-
-  vBurnIN = 1:iBurnPeriod
-
-  vEps_DMA  = (object@Est$veps)[-vBurnIN]
-  vLpdf_DMA = object@Est$vLpdfhat[-vBurnIN]
-
-  vEps_DMS  = (object@Est$vyhat_DMS - vY)[-vBurnIN]
-  vLpdf_DMS = object@Est$vLpdfhat_DMS[-vBurnIN]
-
-  mOut = matrix(NA, 3, 2, dimnames = list(c("MSE", "MAD", "Log-predictive Likelihood"), c("DMA", "DMS")))
-
-  mOut["MSE", "DMA"] = mean(vEps_DMA^2.0)
-  mOut["MSE", "DMS"] = mean(vEps_DMS^2.0)
-  mOut["MAD", "DMA"] = mean(abs(vEps_DMA))
-  mOut["MAD", "DMS"] = mean(abs(vEps_DMS))
-
-  mOut["Log-predictive Likelihood", "DMA"] = sum(vLpdf_DMA)
-  mOut["Log-predictive Likelihood", "DMS"] = sum(vLpdf_DMS)
-
-  return(mOut)
-
+  rows <- .dma_rows(object, iBurnPeriod)
+  out <- matrix(NA_real_, 3L, 2L,
+                dimnames = list(c("MSE", "MAD", "Log-predictive Likelihood"), c("DMA", "DMS")))
+  for (type in colnames(out)) {
+    suffix <- if (type == "DMS") "_DMS" else ""
+    e <- object@Est[[paste0("veps", suffix)]][rows, 1L]
+    lp <- object@Est[[paste0("vLpdfhat", suffix)]][rows, 1L]
+    out[, type] <- c(mean(e^2), mean(abs(e)), sum(lp))
+  }
+  out
 }
-
-

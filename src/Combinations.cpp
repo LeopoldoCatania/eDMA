@@ -1,124 +1,49 @@
 #include <RcppArmadillo.h>
-#include "Utils.h"
+#include <vector>
+#include <cmath>
+#include "Combinations.h"
 
-using namespace Rcpp;
-using namespace arma;
-
-// [[Rcpp::export]]
-List PowerSet(int iK) {
-
-  int i,j;
-  NumericVector els(iK);
-  for(i=0;i<iK;i++)
-    els[i]=i;
-
-  int pwrset_card = int_pow(2,iK);
-  List out(pwrset_card);
-  out[0] = NumericVector::create();
-  NumericVector tmp;
-  int counter = 0;
-  for (i=0; i < iK; ++i) {
-    int cnt2 = counter;            // capture counter state
-    for (j =0; j <= counter; ++j) {
-      cnt2++;                   // capture counter j steps
-      tmp = as<NumericVector>(out[j]);
-      tmp.push_back(els[i]);
-      out[cnt2] = Rcpp::as<arma::uvec>(wrap(tmp));
+// Enumerate optional bits only, in the original ascending bit-mask order.
+arma::field<arma::uvec> PowerSet2_f(int K, arma::vec keep) {
+  if (K < 1) Rcpp::stop("The design must contain at least one column.");
+  std::vector<bool> required(K, false);
+  bool none = keep.n_elem == 1 && keep(0) == -9999;
+  if (!none) {
+    if (keep.is_empty()) Rcpp::stop("vKeep must be nonempty or NULL.");
+    for (double k : keep) {
+      if (!std::isfinite(k) || k != std::floor(k) || k < 0 || k >= K || required[k])
+        Rcpp::stop("Invalid or duplicated vKeep index.");
+      required[k] = true;
     }
-    counter = cnt2;             // update counter state
   }
-
+  std::vector<unsigned> optional;
+  for (int k=0; k<K; ++k) if (!required[k]) optional.push_back(k);
+  if (optional.size() > 20) Rcpp::stop("At most 20 optional design columns are supported; use vKeep to reduce the model space.");
+  size_t count = size_t(1) << optional.size();
+  arma::field<arma::uvec> out(count - (none ? 1 : 0));
+  size_t at=0;
+  for (size_t bits=(none ? 1 : 0); bits<count; ++bits) {
+    std::vector<arma::uword> columns;
+    size_t b=0;
+    for (int k=0; k<K; ++k) {
+      if (required[k]) columns.push_back(k);
+      else { if (bits & (size_t(1)<<b)) columns.push_back(k); ++b; }
+    }
+    out(at++) = arma::uvec(columns);
+  }
   return out;
 }
 
-field<uvec> PowerSet2(int iK) {
-
-  int i,j;
-  NumericVector els(iK);
-  for(i=0;i<iK;i++)
-    els[i]=i;
-
-  int pwrset_card = int_pow(2,iK);
-  NumericVector tmp;
-  field<uvec> fOut(pwrset_card);
-
-  int counter = 0;
-  for (i=0; i < iK; ++i) {
-    int cnt2 = counter;            // capture counter state
-    for (j =0; j <= counter; ++j) {
-      cnt2++;                   // capture counter + j steps
-      tmp = as<NumericVector>(wrap(fOut(j)));
-      tmp.push_back(els[i]);
-      fOut(cnt2) = Rcpp::as<arma::uvec>(wrap(tmp));
-    }
-    counter = cnt2;             // update counter state
+// [[Rcpp::export]]
+Rcpp::List PowerSet(double iK) {
+  if (!std::isfinite(iK) || iK != std::floor(iK) || iK < 0 || iK > 20)
+    Rcpp::stop("iK must be an integer between 0 and 20.");
+  size_t count = size_t(1) << static_cast<unsigned>(iK);
+  Rcpp::List out(count);
+  for (size_t bits=0; bits<count; ++bits) {
+    std::vector<double> columns;
+    for (unsigned k=0; k<iK; ++k) if (bits & (size_t(1)<<k)) columns.push_back(k);
+    out[bits] = Rcpp::wrap(columns);
   }
-
-  fOut = fOut.rows(1,pwrset_card-1);
-
-  return fOut;
+  return out;
 }
-
-field<uvec> PowerSet2_withkeep(int iK, arma::vec vKeep) {
-
-  int i,j,k;
-  NumericVector els(iK);
-  for(i=0;i<iK;i++)
-    els[i]=i;
-
-  int pwrset_card = int_pow(2,iK);
-  NumericVector tmp;
-  field<uvec> fOut(pwrset_card);
-
-  int vKeep_size = vKeep.size();
-  double idummy=0.0;
-
-  int cnt, counter = 0;
-  for (i=0; i < iK; ++i) {
-    cnt = counter;            // capture counter state
-    for (j =0; j <= counter; ++j) {
-      tmp = as<NumericVector>(wrap(fOut(j)));
-      tmp.push_back(els[i]);
-      cnt++;                   // capture counter + j steps
-      fOut(cnt) = Rcpp::as<arma::uvec>(wrap(tmp));
-    }
-    counter = cnt;             // update counter state
-  }
-
-  arma::vec vKeep_Index(pwrset_card);
-  arma::uvec tmp2;
-  int Size2Keep = 0;
-
-  for(j=1;j<pwrset_card;j++){
-    idummy = 0;
-    tmp2   = fOut(j);
-    for(k=0;k<vKeep_size;k++){
-      idummy += sum(tmp2==vKeep(k));
-    }
-    if(idummy==vKeep_size){
-      vKeep_Index(Size2Keep) = j;
-      Size2Keep++;
-    }
-  }
-
-  field<uvec> fOut2(Size2Keep);
-
-  for(j=0;j<Size2Keep;j++){
-    fOut2(j) = fOut(vKeep_Index(j));
-  }
-
-  return fOut2;
-}
-
-field<uvec> PowerSet2_f(int iK, arma::vec vKeep){
-  field<uvec> fOut;
-
-  if(vKeep(0) == -9999){
-    fOut = PowerSet2(iK);
-  }else{
-    fOut = PowerSet2_withkeep(iK, vKeep);
-  }
-
-  return fOut;
-}
-

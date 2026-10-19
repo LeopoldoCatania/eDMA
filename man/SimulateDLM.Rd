@@ -11,19 +11,19 @@
 }
 \arguments{
 \item{iT}{
-\code{numeric}, number of observation to simulate.
+\code{numeric}, positive integer number of observations to simulate.
 }
 \item{mX}{
-\code{matrix} of dimension \code{iT} x N m where N is the number of covariates.
+\code{matrix} of dimension \code{iT} x N where N is the number of covariates.
 }
 \item{vBeta0}{
 \code{numeric} vector with initial value for the regressor coefficients.
 }
 \item{mW}{
-\code{matrix} covariance matrix of the state equation.
+\code{matrix} symmetric positive-semidefinite covariance matrix of the state equation. Zero and rank-deficient covariance matrices are supported.
 }
 \item{dV}{
-\code{numeric} variance of the observation (measurement equation).
+\code{numeric} nonnegative variance of the observation (measurement equation).
 }
 \item{dPhi}{
 \code{numeric} value for the autoregressive parameter of the regressors. It imposes that all the regressors have the same autoregressive parameters, if \code{dPhi = 1}, then the regressors evolve as random-walks.
@@ -32,12 +32,12 @@
 
 }
 \details{
-	The function returns a \code{list} of two elements: \code{vY} and \code{mBeta}. \code{vY} is a \code{iT} x 1 \code{numeric} vector of simulated dependent variables. \code{mBeta} is a \code{matrix} of dimension \code{iT x ncol(mX)} of regressor coefficients.
+	The function returns a \code{list} of two elements: \code{vY} and \code{mBeta}. \code{vY} is a \code{iT} x 1 \code{numeric} vector of simulated dependent variables. \code{mBeta} is a \code{matrix} of dimension \code{ncol(mX) x iT} of regressor coefficients.
 }
 \value{
 An object of the class \code{list}.
 }
-\author{ Leopoldo Catania & Nima Nonejad }
+\author{ Leopoldo Catania }
 \references{
 Catania, Leopoldo, and Nima Nonejad (2018). "Dynamic Model Averaging for Practitioners in Economics and Finance: The eDMA Package." Journal of Statistical Software, 84(11), 1-39. \doi{10.18637/jss.v084.i11}.\cr
 

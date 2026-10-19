@@ -4,12 +4,12 @@
 	Perform Dynamic Model Averaging
 }
 \description{
-	Implements the Dynamic Model Averaging procedure with the possibility of also performing averaging over a grid of foregetting factor values
+	Implements the Dynamic Model Averaging procedure with the possibility of also performing averaging over a grid of forgetting factor values
 }
 \usage{
-DMA(formula, data, vDelta = c(0.9, 0.95, 0.99), dAlpha = 0.99,
+DMA(formula, data = NULL, vDelta = c(0.9, 0.95, 0.99), dAlpha = 0.99,
     vKeep = NULL, bZellnerPrior = FALSE, dG = 100, bParallelize = TRUE,
-    iCores = NULL, dBeta = 1.0)
+    iCores = NULL, dBeta = 1.0, dS0 = 1.0, dN0 = 2.0)
 }
 \arguments{
 \item{formula}{
@@ -41,12 +41,66 @@ an object of class \link{formula} (or one that can be coerced to that class): a 
         \code{detectCores()} function from the \code{parallel} package.
 	}
 			\item{dBeta}{
-	integer indicating the forgetting factor for the measurement variance, see Prado and West (2010) pp. 132 and Beckmann and Schussler (2014).
+	numeric scalar in (0, 1] indicating the forgetting factor for the measurement variance, see Prado and West (2010) pp. 132 and Beckmann and Schussler (2014).
 	}
+\item{dS0}{Positive initial observation scale, fixed before observing the data. Defaults to 1.}
+\item{dN0}{Positive initial degrees-of-freedom accumulator. Defaults to 2.}
+
 }
 \details{
+All discounts must lie in (0, 1]. The model space consists of nonempty
+subsets of the columns of the model matrix, including factor expansions and
+formula transformations. Indices in \code{vKeep} refer to these columns;
+\code{"KS"} includes all columns. At most 20 optional columns are allowed.
+An estimated working-memory limit of 1 GiB is checked before allocating
+model/delta state arrays. Formula offsets are not supported.
 
-There might be situations when the practitioner desires to predict \eqn{T+1} conditional on observation till time \eqn{T} in a true out-of-sample fashion. In such circumstances the user can substitute the future value of the dependent variable with an \code{NA}. This way, the code treats the last observation as missing and does not perform backtesting or updating of the coefficients. However, the filter provides us with the necessary quantities to perform prediction. The predicted value \eqn{\hat{y_{T+1}} = E[y_T+1 | F_T]} as well as the predicted variance decomposition can then be extracted using the \link{getLastForecast} method. The other quantities that can be extracted, for example via the \link{as.data.frame} method, will ignore the presence of the last \code{NA} and report results only for the fist \eqn{T} observations.
+At each step both the conditional model probabilities and delta probabilities
+are raised to \code{dAlpha} and separately normalized. These prediction
+probabilities are used consistently for point forecasts, predictive densities,
+and all predictive variance components. After observing the response, Bayes'
+rule updates both probability layers using the same conditional predictive
+likelihoods. Filtered coefficients use these posterior probabilities, with
+absent coefficients represented by zeros. Normalization is performed in log
+space. This coherent discounted prediction convention is an explicit change
+from the lagged-weight forecast formulas in the published paper; see NEWS.
+
+The coefficient prior has mean zero and covariance \code{dG * I} unless
+\code{bZellnerPrior = TRUE}. The first row is processed through the same
+prediction and update equations as subsequent rows, with no coefficient
+covariance inflation before that first observation. Observation scale starts
+at \code{dS0} and the degrees-of-freedom accumulator starts at \code{dN0}.
+Predictive Student-t densities retain the package's convention
+\eqn{\nu_t = \beta n_{t-1}+1}. The scale is
+\eqn{Q_t = S_{t-1}+x_t'R_t x_t}. Observation and coefficient contributions
+to predictive variance multiply their scale contributions by
+\eqn{\nu_t/(\nu_t-2)} when \eqn{\nu_t>2}; otherwise the predictive
+variance is infinite. Between-model and between-delta contributions use
+prediction means and prediction probabilities. The coefficient covariance
+update remains the plug-in Kalman recursion, without a subsequent scale-ratio
+rescaling; it is not an exact Normal--inverse-gamma filter.
+
+The Zellner covariance uses least squares on all supplied observed responses,
+with residual sum of squares divided by \eqn{T-1}, and is reused across deltas.
+A terminal forecast-only row is excluded. A residual-scale floor of
+\code{dS0 * 1e-12} prevents a zero prior covariance for an exact fit.
+Rank-deficient or ill-conditioned designs are rejected. Because this prior
+uses the complete observed sample, historical forecasts with the Zellner
+option are not real-time forecasts. Use the fixed prior for causal filtering.
+
+DMS forecasts retain the nested selection rule: select the largest prediction
+probability for delta, then the largest conditional model probability within
+that delta. The model-size and maximum/top-ten-percent probability diagnostics
+instead describe the marginal posterior distribution over models.
+
+Rows with incomplete data are omitted, except that a final missing response
+with complete predictors is retained for prediction only. Nonfinite observed
+data are rejected. Original time indexes are preserved for ts, zoo and xts
+inputs. No artificial response is imputed.
+
+
+
+There might be situations when the practitioner desires to predict \eqn{T+1} conditional on observation till time \eqn{T} in a true out-of-sample fashion. In such circumstances the user can substitute the future value of the dependent variable with an \code{NA}. This way, the code treats the last observation as missing and does not perform backtesting or updating of the coefficients. However, the filter provides us with the necessary quantities to perform prediction. The predicted value \eqn{\hat{y_{T+1}} = E[y_T+1 | F_T]} as well as the predicted variance decomposition can then be extracted using the \link{getLastForecast} method. The other quantities that can be extracted, for example via the \link{as.data.frame} method, will ignore the presence of the last \code{NA} and report results only for the first \eqn{T} observations.
 
 See Catania and Nonejad (2016) for further details.
 }
@@ -67,7 +121,7 @@ Using Macroeconomic Variables.\emph{Journal of Financial Economics}, \bold{106(3
 
 Prado, R., & West, M. (2010). Time series: modeling, computation, and inference. CRC Press.
 }
-\author{ Leopoldo Catania & Nima Nonejad }
+\author{ Leopoldo Catania }
 \examples{
 
 #  Code chunk of Catania and Nonejad (2016) Fast Dynamic Model Averaging

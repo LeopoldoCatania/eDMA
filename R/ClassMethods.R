@@ -86,318 +86,78 @@ setMethod("summary", "DMA", function(object, iBurnPeriod = NULL) {
 })
 
 setMethod("as.data.frame", signature(x = "DMA"), function(x, which, iBurnPeriod = NULL) {
-  object = x
-  vY  = object@data$vY
-  Est = object@Est
-
-  if (is(vY, "xts")) {
-    vDates = index(vY)
-  } else {
-    vDates = 1:length(vY)
-  }
-
-  if (!is.null(iBurnPeriod)) {
-    vY = vY[-c(1:iBurnPeriod)]
-    vDates = vDates[-c(1:iBurnPeriod)]
-    for (v in 1:length(Est)) {
-      if (is.matrix(Est[[v]])) {
-        Est[[v]] = Est[[v]][-c(1:iBurnPeriod), ]
-      } else {
-        Est[[v]] = Est[[v]][-c(1:iBurnPeriod)]
-      }
-    }
-  }
-
-  if (which == "mvdec") {
-    Out =  Est[["mvdec"]]
-    colnames(Out) = c("vtotal", "vobs", "vcoeff", "vmod", "vtvp")
-  } else if (which == "mtheta") {
-    Out = Est[["mmhat"]]
-  } else {
-    Out = Est[[which]]
-  }
-
-  if (which == "mincpmt" | which == "mtheta") {
-    vNames = colnames(object@data$mF)
-    if (is.null(vNames))
-      vNames = paste("var", 1:ncol(Out), sep = ".")
-    colnames(Out) = vNames
-  }
-
-  if (which == "mpmt") {
-    vDelta = object@model$vDelta
-    colnames(Out) = vDelta
-  }
-
-  if (is(vY, "xts")) {
-    Out = xts(Out, vDates)
-  }
-
-  return(Out)
+  if (!is.character(which) || length(which) != 1L || is.na(which)) stop("which must name one output series.")
+  key <- if (which == "mtheta") "mmhat" else which
+  out <- x@Est[[key]]
+  if (!is.matrix(out) || nrow(out) != nrow(x@data$mF)) stop("Unsupported output series: ", which)
+  rows <- .dma_rows(x, iBurnPeriod)
+  out <- out[rows, , drop = FALSE]
+  if (key == "mvdec") colnames(out) <- c("vtotal", "vobs", "vcoeff", "vmod", "vtvp")
+  if (key %in% c("mincpmt", "mmhat", "mcovhat")) colnames(out) <- colnames(x@data$mF)
+  if (key %in% c("mpmt", "mpmt_pred", "mLpdf")) colnames(out) <- x@model$vDelta
+  .dma_indexed(out, if (is.null(x@data$vDates)) NULL else x@data$vDates[rows])
 })
 
 setMethod("plot", signature(x = "DMA", y = "missing"), function(x, which = NULL, iBurnPeriod = NULL, ...) {
-
-  Est = x@Est
-  vY = x@data$vY
-  mF = x@data$mF
-  vDates = x@data$vDates
-
-  if (is.null(vDates)) {
-    vDates = 1:length(vY)
-  }
-  if (!is.null(iBurnPeriod)) {
-    vY = vY[-c(1:iBurnPeriod)]
-    mF = mF[-c(1:iBurnPeriod), ]
-    vDates = vDates[-c(1:iBurnPeriod)]
-
-    for (v in 1:length(Est)) {
-      if (is.matrix(Est[[v]])) {
-        Est[[v]] = Est[[v]][-c(1:iBurnPeriod), ]
-      } else {
-        Est[[v]] = Est[[v]][-c(1:iBurnPeriod)]
-      }
+  rows <- .dma_rows(x, iBurnPeriod)
+  if (is.null(which)) {
+    if (!interactive()) which <- "vyhat"
+    else {
+      choice <- menu(PlotMenu("DMA"))
+      if (!choice) return(invisible(x))
+      which <- PlotNumber2Label(choice)
     }
   }
-
-  iT = length(vY)
-
-  PlotType = 1
-  while (PlotType > 0) {
-    if (is.null(which)) {
-      cat(paste("Type 1-", length(PlotMenu("DMA")), " or 0 to exit", sep = ""))
-      PlotType = menu(PlotMenu("DMA"))
-
-      if (PlotType > 0) {
-        PlotLabel   = PlotNumber2Label(PlotType)
-        series2plot = as.matrix(Est[[PlotLabel]])
-        if (PlotLabel == "mvdec") {
-          colnames(series2plot) = c("vtotal", "vobs", "vcoeff", "vmod", "vtvp")
-        }
-        if (PlotLabel == "mmhat") {
-          colnames(series2plot) = colnames(mF)
-        }
-      }
-
-    } else {
-      if (which == "mtheta") {
-        which = "mmhat"
-      }
-      series2plot = as.matrix(Est[[which]])
-      if (is.null(series2plot))
-        stop(paste("which =", which, "is not supported."))
-      PlotType = PlotLabel2Number(which)
-    }
-
-    if (PlotType > 0) {
-
-      if (dev.cur() != 1) {
-        dev.off()
-      }
-
-      if (ncol(series2plot) == 1) {
-        sTitle = TitleFun("DMA", PlotType)
-        plot(vDates, vY, type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = c(min(series2plot[-1]), max(series2plot[-1])),
-             main = sTitle)
-        grid(nx = 10, ny = 10, col = "gray", lty = "dotted")
-        lines(vDates[-1], series2plot[-1], col = "black")
-        if (PlotType == 1 | PlotType == 15)
-          points(vDates, vY, col = "red")
-        if (!is.numeric(vDates)) {
-          axis.Date(1, at = seq(min(vDates), max(vDates) + 300, "year"))
-          axis.Date(1, at = seq(min(vDates), max(vDates) + 300, "quarter"), labels = FALSE, tcl = -0.2)
-        } else {
-          axis(1)
-        }
-        LegendFun("DMA", PlotType)
-
-      } else {
-        iV = ncol(series2plot)
-        VarNames = colnames(series2plot)
-        if (PlotType == 4)
-          VarNames = colnames(mF)
-        if (is.null(VarNames))
-          VarNames = 1:iV
-
-        if (iV <= 5) {
-          layout(matrix(1:iV, iV, 1), heights = c(rep(2, iV - 1), 2.5))
-          for (i in 1:(iV)) {
-            if (i == 1)
-              par(mar = c(0, 4, 0.1, 2))
-            if (i != 1 & i != iV)
-              par(mar = c(0, 4, 0, 2))
-            if (i == iV)
-              par(mar = c(3, 4, 0, 2))
-
-            if (any(PlotType == c(4, 5))) {
-              vLim = c(0, 1)
-            } else {
-              vLim = c(min(series2plot[, i]), max(series2plot[, i]))
-            }
-
-            plot(vDates, series2plot[, i], type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = vLim)
-            grid(nx = 10, ny = 10, col = "gray", lty = "dotted")
-            lines(vDates[-1], series2plot[-1, i], col = "black")
-            axis(4, at = mean(vLim), labels = VarNames[i], tick = FALSE, padj = -1)
-          }
-          if (is(vY, "xts")) {
-            axis.Date(1, at = seq(min(vDates), max(vDates), "year"))
-            axis.Date(1, at = seq(min(vDates), max(vDates), "quarter"), labels = FALSE, tcl = -0.2)
-          } else {
-            axis(1)
-          }
-
-        } else if (iV == 6 | iV == 8 ) {
-          if (iV == 6) {
-            plotSeq = seq(1, iV + 1, 3)
-            layout(matrix(1:6, 3, 2), heights = c(rep(2, 2), 2.5, rep(2, 2), 2.5))
-          }
-          if (iV == 8) {
-            plotSeq = seq(1, iV + 1, 4)
-            layout(matrix(1:8, 4, 2), heights = c(rep(2, 3), 2.5, rep(2, 3), 2.5))
-          }
-
-          for (i in 1:iV) {
-            if (i <= iV) {
-              if (any(i == plotSeq))
-                par(mar = c(0, 4, 0.1, 2))
-              if (all(i != plotSeq) & all(i != plotSeq - 1))
-                par(mar = c(0, 4, 0, 2))
-              if (any(i == plotSeq - 1))
-                par(mar = c(3, 4, 0, 2))
-
-              if (any(PlotType == c(4, 5))) {
-                vLim = c(0, 1)
-              } else {
-                vLim = c(min(series2plot[, i]) * 1.1, max(series2plot[, i]) * 1.1)
-              }
-
-              plot(vDates, series2plot[, i], type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = vLim)
-              grid(nx = 10, ny = 10, col = "gray", lty = "dotted")
-              lines(vDates[-1], series2plot[-1, i], col = "black")
-              axis(4, at = mean(vLim), labels = VarNames[i], tick = FALSE, padj = -1)
-
-              if (any(i == plotSeq - 1) | (i == iV)) {
-
-                if (is(vY, "xts")) {
-                  axis.Date(1, at = seq(min(vDates), max(vDates), "year"))
-                  axis.Date(1, at = seq(min(vDates), max(vDates), "quarter"), labels = FALSE, tcl = -0.2)
-                } else {
-                  axis(1)
-                }
-
-              }
-            }
-          }
-
-        } else {
-          nPlot = ceiling(iV/10)
-          plotSeq = seq(1, iV + 1, 5)
-          Start = 1
-          PlotType2 = ""
-
-          for (j in 1:nPlot) {
-            if (PlotType2 != "0") {
-
-              layout(matrix(1:10, 5, 2), heights = c(rep(2, 4), 2.5, rep(2, 4), 2.5))
-
-              for (i in Start:(Start + 9)) {
-                if (i <= iV) {
-                  if (any(i == plotSeq))
-                    par(mar = c(0, 4, 0.1, 2))
-                  if (all(i != plotSeq) & all(i != plotSeq - 1))
-                    par(mar = c(0, 4, 0, 2))
-                  if (any(i == plotSeq - 1))
-                    par(mar = c(3, 4, 0, 2))
-
-                  if (any(PlotType == c(4, 5))) {
-                    vLim = c(0, 1)
-                  } else {
-                    vLim = c(min(series2plot[, i]) * 1.1, max(series2plot[, i]) * 1.1)
-                  }
-
-                  plot(vDates, series2plot[, i], type = "n", xaxt = "n", xlab = "", ylab = "", las = 1, ylim = vLim)
-                  grid(nx = 10, ny = 10, col = "gray", lty = "dotted")
-                  lines(vDates[-1], series2plot[-1, i], col = "black")
-                  axis(4, at = mean(vLim), labels = VarNames[i], tick = FALSE, padj = -1)
-
-                  if (any(i == plotSeq - 1) | (i == iV)) {
-
-                    if (is(vY, "xts")) {
-                      axis.Date(1, at = seq(min(vDates), max(vDates), "year"))
-                      axis.Date(1, at = seq(min(vDates), max(vDates), "quarter"), labels = FALSE, tcl = -0.2)
-                    } else {
-                      axis(1)
-                    }
-
-                  }
-                }
-              }
-              Start = Start + 10
-              if (j < nPlot)
-                PlotType2 = readline("Hit enter for next figures or 0 to exit\n:")
-
-            }
-          }
-
-        }
-
-      }
-    }
-    if (!is.null(which))
-      PlotType = 0
+  values <- as.matrix(as.data.frame(x, which = which, iBurnPeriod = iBurnPeriod))
+  dates <- if (is.null(x@data$vDates)) rows else x@data$vDates[rows]
+  old <- par(no.readonly = TRUE)
+  on.exit(par(old), add = TRUE)
+  count <- ncol(values)
+  titles <- colnames(values)
+  if (is.null(titles)) titles <- if (count == 1L) which else paste(which, seq_len(count))
+  perpage <- min(count, 10L)
+  par(mfrow = c(ceiling(perpage / 2), if (perpage == 1L) 1L else 2L),
+      mar = c(2.5, 3, 2, 1))
+  for (j in seq_len(count)) {
+    y <- values[, j]
+    finite <- is.finite(y)
+    lim <- if (any(finite)) range(y[finite]) else c(0, 1)
+    y[!finite] <- NA_real_
+    args <- utils::modifyList(list(x = dates, y = y, type = "l", xlab = "", ylab = "",
+                                  main = titles[j], ylim = lim), list(...))
+    do.call(graphics::plot, args)
+    grid()
+    if (which %in% c("vyhat", "vyhat_DMS")) points(dates, as.numeric(x@data$vY)[rows], col = "red")
   }
+  invisible(x)
 })
 
-setMethod("coef", signature(object = "DMA"), function(object, iBurnPeriod = NULL ){
-  mTheta = as.data.frame(object, which = "mtheta", iBurnPeriod = iBurnPeriod)
-  return(mTheta)
+setMethod("coef", signature(object = "DMA"), function(object, iBurnPeriod = NULL) {
+  as.data.frame(object, which = "mtheta", iBurnPeriod = iBurnPeriod)
 })
-
-setMethod("residuals",  signature(object = "DMA"), function(object, standardize = FALSE,  type = "DMA", iBurnPeriod = NULL ) {
-  if (type == "DMA") vres = as.data.frame(object, which = "veps", iBurnPeriod = iBurnPeriod)
-  if (type == "DMS") vres = as.data.frame(object, which = "veps_DMS", iBurnPeriod = iBurnPeriod)
-
-  if (standardize) vres = vres/sd(vres)
-
-  return(vres)
-})
-
-inclusion.prob = function(object, ...) {
-  UseMethod("inclusion.prob")
-}
-
-setMethod("inclusion.prob",  signature(object = "DMA"), function(object, iBurnPeriod = NULL ) {
-  mProb = as.data.frame(object, which = "mincpmt", iBurnPeriod = iBurnPeriod)
-  return(mProb)
-})
-
-pred.like = function(object, ...) {
-  UseMethod("pred.like")
-}
-
-setMethod("pred.like",  signature(object = "DMA"), function(object, type = "DMA", iBurnPeriod = NULL ) {
-
-  if (type == "DMA") vPredLike = as.data.frame(object, which = "vLpdfhat", iBurnPeriod = iBurnPeriod)
-  if (type == "DMS") vPredLike = as.data.frame(object, which = "vLpdfhat_DMS", iBurnPeriod = iBurnPeriod)
-
-  return(vPredLike)
-})
-
-
-getLastForecast = function(object, ...) {
-  UseMethod("getLastForecast")
-}
-
-setMethod("getLastForecast",  signature(object = "DMA"), function(object) {
-
-  lOut = NULL
-
-  if (object@Est[["LastForecast"]]$bForecast) {
-    lOut = object@Est[["LastForecast"]][1:2]
-  } else {
-    stop("The last observation is available. Please use the standard as.data.frame() method. See help(DMA).")
+setMethod("residuals", signature(object = "DMA"), function(object, standardize = FALSE, type = "DMA", iBurnPeriod = NULL) {
+  if (!is.character(type) || length(type) != 1L || is.na(type) || !type %in% c("DMA", "DMS")) stop("type must be DMA or DMS.")
+  if (!is.logical(standardize) || length(standardize) != 1L || is.na(standardize)) stop("standardize must be TRUE or FALSE.")
+  out <- as.data.frame(object, which = if (type == "DMA") "veps" else "veps_DMS", iBurnPeriod = iBurnPeriod)
+  if (standardize) {
+    scale <- sd(as.numeric(out))
+    if (!is.finite(scale) || scale <= 0) stop("Residual standard deviation is zero or undefined.")
+    out <- out / scale
   }
-
-  return(lOut)
+  out
+})
+inclusion.prob <- function(object, ...) UseMethod("inclusion.prob")
+setMethod("inclusion.prob", signature(object = "DMA"), function(object, iBurnPeriod = NULL) {
+  as.data.frame(object, which = "mincpmt", iBurnPeriod = iBurnPeriod)
+})
+pred.like <- function(object, ...) UseMethod("pred.like")
+setMethod("pred.like", signature(object = "DMA"), function(object, type = "DMA", iBurnPeriod = NULL) {
+  if (!is.character(type) || length(type) != 1L || is.na(type) || !type %in% c("DMA", "DMS")) stop("type must be DMA or DMS.")
+  as.data.frame(object, which = if (type == "DMA") "vLpdfhat" else "vLpdfhat_DMS", iBurnPeriod = iBurnPeriod)
+})
+getLastForecast <- function(object, ...) UseMethod("getLastForecast")
+setMethod("getLastForecast", signature(object = "DMA"), function(object) {
+  out <- object@Est$LastForecast
+  if (!isTRUE(out$bForecast)) stop("No future forecast is available: supply a final NA response with known predictors to DMA().")
+  out[c("PointForecast", "VarianceDecomposition", "ForecastDate")]
 })

@@ -14,16 +14,16 @@
 an object of the class \link{DMA-class}, created using the function \link{DMA}.
 }
 	\item{iBurnPeriod}{
-	An integer indicating the length of the burn-in period. By default \code{iBurnPeriod = NULL}. If \code{iBurnPeriod = NULL} then one third of the total sample is used as the burn-in in period and a warning is printed.
+	An integer between zero and one less than the sample size indicating the length of the burn-in period. By default \code{iBurnPeriod = NULL}. If \code{iBurnPeriod = NULL} then one third of the total sample is used as the burn-in in period and a warning is printed.
 	}
 }
 \details{
-	The function returns a \code{matrix} with Mean Squared Error (MSE), Mean Absolute Error (MAD) and Predictive Likelihood for DMA and DMS using the predictions during the out-of-sample period.
+	The function returns a \code{matrix} with Mean Squared Error (MSE), Mean Absolute Error (MAD) and summed predictive log likelihood for DMA and DMS using the predictions during the out-of-sample period.
 }
 \value{
 An object of the class \code{matrix}.
 }
-\author{ Leopoldo Catania & Nima Nonejad }
+\author{ Leopoldo Catania }
 \examples{
 
 library(eDMA)

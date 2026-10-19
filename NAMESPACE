@@ -1,6 +1,6 @@
 #exportPattern("^[[:alpha:]]+") #remove before CRAN
 #importFrom(Rcpp, evalCpp)      #remove before CRAN
-useDynLib(eDMA)
+useDynLib(eDMA, .registration = TRUE)
 import(methods)
 importFrom(Rcpp, evalCpp)
 importFrom(xts, xts)
@@ -8,7 +8,6 @@ importFrom(zoo, index)
 importFrom(parallel, detectCores)
 importFrom("stats", "na.omit")
 importFrom("utils", "tail")
-importFrom("grDevices", "dev.cur", "dev.off")
 importFrom("graphics", "axis", "axis.Date", "grid", "layout", "legend", "lines", "par", "points")
 importFrom("stats", "as.formula", "model.frame", "model.matrix", "quantile", "sd")
 importFrom("utils", "menu")

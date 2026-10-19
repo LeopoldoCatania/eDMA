@@ -18,7 +18,7 @@ License: \tab GPL (>= 2)\cr
 }
 }
 \author{
-Leopoldo Catania & Nima Nonejad
+Leopoldo Catania
 
 Maintainer: Leopoldo Catania <leopoldo.catania@econ.au.dk>
 }

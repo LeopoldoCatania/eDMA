@@ -11,3 +11,7 @@
   * DESCRIPTION (Version): New version is 1.5-4.
   * Fixing the note: "Found the following Rd file(s) with Rd \link{} targets missing package anchors:"
   * Adding ORCID
+
+2026-10-19
+  * Version 1.5-5: correction of forecast timing, hierarchical probabilities,
+    initialization, variances and R interface.

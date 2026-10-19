@@ -1,7 +1,7 @@
 Package: eDMA
 Type: Package
 Title: Dynamic Model Averaging with Grid Search
-Version: 1.5-4
+Version: 1.5-5
 Authors@R: c(person("Leopoldo", "Catania", role = c("aut", "cre"),
              email = "leopoldo.catania@econ.au.dk",
              comment = c(ORCID = "0000-0002-0981-1921")),
@@ -19,9 +19,7 @@ Imports: Rcpp (>= 0.12.5)
 LinkingTo: Rcpp,RcppArmadillo
 Depends: zoo,xts,methods,parallel
 NeedsCompilation: yes
-Packaged: 2025-05-12 14:26:44 UTC; au588008
 Author: Leopoldo Catania [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-0981-1921>),
   Nima Nonejad [ctb] (ORCID: <https://orcid.org/0000-0001-8123-501X>)
-Repository: CRAN
-Date/Publication: 2025-05-12 18:30:01 UTC
+Packaged: 2026-10-19 07:46:06 UTC; root
