@@ -2,18 +2,18 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 PowerSet <- function(iK) {
-    .Call('_eDMA_PowerSet', PACKAGE = 'eDMA', iK)
+    .Call(`_eDMA_PowerSet`, iK)
 }
 
 funcEstimate_Eff <- function(vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior = TRUE, dG = 50.0, dS0 = 1.0, dN0 = 2.0) {
-    .Call('_eDMA_funcEstimate_Eff', PACKAGE = 'eDMA', vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, dS0, dN0)
+    .Call(`_eDMA_funcEstimate_Eff`, vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, dS0, dN0)
 }
 
 funcEstimate_Eff_par <- function(vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior = TRUE, dG = 50.0, iCores = 2, dS0 = 1.0, dN0 = 2.0) {
-    .Call('_eDMA_funcEstimate_Eff_par', PACKAGE = 'eDMA', vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, iCores, dS0, dN0)
+    .Call(`_eDMA_funcEstimate_Eff_par`, vY, mX, vDelta, dAlpha, vKeep, dBeta, bZellnerPrior, dG, iCores, dS0, dN0)
 }
 
 SimulateDLM <- function(iT, mX, vBeta0, mW, dV, dPhi) {
-    .Call('_eDMA_SimulateDLM', PACKAGE = 'eDMA', iT, mX, vBeta0, mW, dV, dPhi)
+    .Call(`_eDMA_SimulateDLM`, iT, mX, vBeta0, mW, dV, dPhi)
 }
 
